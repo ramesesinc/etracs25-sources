@@ -1,9 +1,0 @@
-package policeclearance;
-
-import java.util.*;
-import police.facts.*;
-import com.rameses.rules.common.*;
-import java.math.*;
-
-global RuleAction action;
-

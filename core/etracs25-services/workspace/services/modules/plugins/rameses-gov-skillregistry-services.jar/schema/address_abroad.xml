@@ -1,5 +1,0 @@
-<schema adapter="skill">
-	<element tablename="address_abroad">
-		<field name="name" required="true" caption="Location"/>
-	</element>
-</schema>

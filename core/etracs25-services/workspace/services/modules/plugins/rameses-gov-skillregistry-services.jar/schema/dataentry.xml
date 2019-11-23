@@ -1,7 +1,0 @@
-<schema adapter="skill">
-	<element tablename="dataentry">
-		<field name="objid" primary="true" prefix="DE"/>
-		<field name="dtcreated" required="true" type="date" caption="Degree / Course"/>
-		<field name="data" required="true"/>
-	</element>
-</schema>

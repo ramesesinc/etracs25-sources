@@ -1,5 +1,0 @@
-<schema adapter="skill">
-	<element tablename="language">
-		<field name="name" required="true" caption="Educational Level"/>
-	</element>
-</schema>
