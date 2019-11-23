@@ -7,8 +7,8 @@ app.cluster=osiris3
 app.context=sms
 readTimeout=60000
 
-env.acctname=137
-env.apikey=1213734
+env.acctname=XXX
+env.apikey=XXXXXXX
 
 [receiver]
 provider=websocket
