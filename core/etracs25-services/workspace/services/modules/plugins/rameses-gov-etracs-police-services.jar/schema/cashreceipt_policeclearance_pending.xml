@@ -1,0 +1,10 @@
+<schema adapter="police">
+	<element tablename="cashreceipt_policeclearance_pending" >
+		<field name="objid" primary="true" /> 
+
+		<complex name="receipt" ref="cashreceipt_policeclearance" 
+			     jointype="many-to-one">
+			<key field="objid" target="objid"/> 
+		</complex> 
+	</element> 
+</schema> 
