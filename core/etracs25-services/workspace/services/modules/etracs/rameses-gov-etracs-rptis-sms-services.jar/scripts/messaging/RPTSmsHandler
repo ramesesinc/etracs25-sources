@@ -21,7 +21,7 @@ class RPTSmsHandler {
 
 	def keywords = ['RPTHELP', 'RPTENROLL', 'RPTINFO', 'RPTBAL', 'RPTSTOP', 'RH', 'RE', 'RI', 'RB', 'RT', 'RTS', 'RS']
 
-	//@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().startsWith('xRPT')}")
+//	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().startsWith('xRPT')}")
 	public void checkKeyword(def params) {
 		def validKeyword = false
 		def info = parseInfo(params)
