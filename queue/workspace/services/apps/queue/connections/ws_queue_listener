@@ -1,0 +1,5 @@
+provider=websocket
+ws.host=${local_etracs_wshost}
+ws.protocol=queue
+ws.group=queue
+ws.enabled=true
