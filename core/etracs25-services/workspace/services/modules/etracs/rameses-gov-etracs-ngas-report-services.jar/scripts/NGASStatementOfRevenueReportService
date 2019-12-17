@@ -109,7 +109,7 @@ class NGASStatementOfRevenueReportService {
 
 		def amtlist = accounts.findAll{( it.amount > 0 )} 
 		def mlevel = amtlist.max{( it.level ? it.level : 0 )}?.level; 
-		if ( !mlevel ) maxlevel = 0; 
+		if ( !mlevel ) mlevel = 0; 
 
 		while (mlevel > 0) {
 			accounts.findAll{( it.level == mlevel )}.each{ n-> 
