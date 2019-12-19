@@ -17,7 +17,7 @@ if ( PARAMS.group ) {
 	<div class="container-fluid"> <!-- open container-fluid -->
 		<div class="row"> <!-- open row -->
 			<ul class="header">
-			  <li><img src="/res/images/agent-logo.png" alt="lgu logo" class="lgu-logo" style="width:80px;"></li>
+			  <li><img src="/res/images/lgu-logo.png" alt="lgu logo" class="lgu-logo" style="width:80px;"></li>
 			  <li><img src="/res/images/etracs.png" alt="etracs logo" class="queue-logo"></li>
 			  <li></li>
 			  <li class="date">

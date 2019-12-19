@@ -14,14 +14,12 @@
 <div class="container">
 	<div class="page-content">
 		<div class="page-header">
-		    <img src="/res/images/agent-logo.png"/>
+		    <img src="/res/images/lgu-logo.png"/>
 		</div>
 		<div class="login-content">
 			${_content}
 		</div>
-		     
 	</div> 
 </div>
-
 </body>
 </html>

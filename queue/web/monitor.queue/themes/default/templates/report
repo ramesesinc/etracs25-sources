@@ -19,7 +19,7 @@
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <a class="navbar-brand pal-logo" href="/report">
-                    <img src="/res/images/agent-logo.png">
+                    <img src="/res/images/lgu-logo.png">
                 </a>
                 <img src="/res/images/rameses.png" class="rameses-logo">
                 <div class="logout">@logout()</div>

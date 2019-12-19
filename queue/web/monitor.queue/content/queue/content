@@ -34,6 +34,14 @@ sections.each{ o->
 		} 
 	} 
 }
+
+def videos = [];
+PROJECT.each{ k,v-> 
+	if ( k.toString().startsWith('video_source_')) videos << v; 
+}
+System.getenv().each{ k,v-> 
+	if ( k.toString().startsWith('video_source_')) videos << v; 
+}
 %>
 
 <div class="wrapper"> <!-- open wrapper -->	
@@ -41,7 +49,7 @@ sections.each{ o->
 		<div class="container-fluid">
 			<div class="row">	 
 				<ul class="headertv">
-				    <li><img src="/res/images/agent-logo.png" alt="lgu logo" class='lgu-logo' style="width:80px;"></li>
+				    <li><img src="/res/images/lgu-logo.png" alt="lgu logo" class='lgu-logo' style="width:80px;"></li>
 				    <li><img src="/res/images/etracs.png" alt="etracs logo" class='queue-logo'></li>
 				    <li class="lead header-title"> 
 				    	${groupinfo?.title} 
@@ -59,11 +67,11 @@ sections.each{ o->
 	<div class="content"> <!-- open content -->	
 		<div class="wrap"> <!-- open wrap --> 
 		  	<div class="video-panel video">
-			    <video id="video" muted>
-			      <source src="http://192.168.0.4/shared/videos/lgutanjay.mp4" type="video/mp4">
-			      <source src="http://192.168.0.4/shared/videos/justforlaughs002.mp4" type="video/mp4">
-			      <source src="http://192.168.0.4/shared/videos/36hacks.mp4" type="video/mp4">
-			    </video>
+				<video id="video" muted>
+					<% videos.each{ %>
+			  		<source src="${it}" type="video/mp4">
+			  		<% } %>
+				</video>
 			</div> 
 			<div class="servedQueue"> <!-- open servedQueue -->
 			<% sections.each{ a-> %> 
@@ -92,9 +100,9 @@ sections.each{ o->
 
 	</div><!-- close content -->	
 
-	${_footer3}
+	${_footer}
 
 </div> <!-- close wrapper -->
 
 ${_script}
-${_style2}
+${_style}
