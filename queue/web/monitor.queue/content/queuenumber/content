@@ -38,12 +38,12 @@ input.btn-ok {
 
 
 <div class="printable">
-	<p class="queue-number-title">Queue Number</p>
-	<div class="queue-header">${PROJECT['lgu.name']} ETRACS Queue</div>   
+	<p class="queue-number-title">Queue Ticket Number</p>
+	<div class="queue-header">${PROJECT['lgu.name']}</div>   
 	<h1 class="queue-number-series">
 		<label r:context="queuenumber">#{seriesno}</label>
 
-		<p align="left" style="margin:0px 0px 10px 0px;font-size:0.5em; font-weight:normal;">
+		<p align="center" style="margin:0px 0px 10px 0px;font-size:0.5em; font-weight:normal;">
 			This number is valid only on <br/> 
 			<label r:context="queuenumber">#{serverDate}</label> 
 		</p>
