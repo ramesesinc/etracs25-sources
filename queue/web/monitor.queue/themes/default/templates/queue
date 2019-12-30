@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title> ${MODULE.title? MODULE.title: PROJECT.title} - ${PAGE.title} </title>	
+	<title> ${PAGE.title} </title>	
 	<meta name="keywords" content="${PROJECT.keywords} ${MODULE.keywords? MODULE.keywords:''}"/>
 	<meta name="description" content="${PROJECT.description}"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
 
 	@css("queue")
 	@css("responsive")
-	@css("queue-monitor")
+	@css(value: "queue-monitor", ver: 1.1)
 	
 	@page-imports()
 </head>
