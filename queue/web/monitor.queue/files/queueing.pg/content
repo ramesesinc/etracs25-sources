@@ -5,6 +5,9 @@ def serverDate = dateSvc.format('MMMMM dd, yyyy', dateSvc.getServerDate());
 def gSvc = SERVICE.lookup('QueueGroupService', 'main'); 
 def groups = gSvc.getGroupsWithSections(); 
 groups = groups.findAll{( it.sections )} 
+groups.each{
+	it.sections.sort{( it.index ? it.index : 0 )}
+}
 
 if ( PARAMS.group ) {
 	def o = groups.find{ it.objid.toString().equalsIgnoreCase( PARAMS.group ) } 
