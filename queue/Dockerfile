@@ -6,4 +6,4 @@ COPY /web /apps/server/web
 COPY /lib/anubis.lib /apps/server/lib/anubis.lib
 COPY /lib/anubis-cms2.jar /apps/server/lib/anubis-cms2.jar
 
-EXPOSE 8080 8070
+EXPOSE 8080 8070 8060
