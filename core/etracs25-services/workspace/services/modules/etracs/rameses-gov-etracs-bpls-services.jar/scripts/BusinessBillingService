@@ -119,7 +119,7 @@ public class BusinessBillingService  {
 				facts << qtr; 
 
 				def qtrinfo = [ qtr: q ];
-				if ( o.app.appyear == currYear ) {
+				if ( o.app?.appyear == currYear ) {
 					qtrinfo.duedate = qtr.deadline;
 				}
 				qtrdates << qtrinfo;
