@@ -115,9 +115,14 @@ public class BusinessBillingService  {
 		years.unique().each { y->
 			(1..4).each { q->
 				def qtr = new QtrDeadline(y, q);	
-				qtr.deadline = expiryDateSvc.findExpiryDate( [year:y, qtr:q] );
-				qtrdates << [ qtr: q, duedate: qtr.deadline ]; 
+				qtr.deadline = expiryDateSvc.findExpiryDate([ year:y, qtr:q ]);
 				facts << qtr; 
+
+				def qtrinfo = [ qtr: q ];
+				if ( o.app.appyear == currYear ) {
+					qtrinfo.duedate = qtr.deadline;
+				}
+				qtrdates << qtrinfo;
 			} 
 		}
 
