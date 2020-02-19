@@ -302,6 +302,7 @@ class RemittanceService  {
 
 	@ProxyMethod 
 	public def getReportData( params ) { 
+		params.prevtxn = remEm.findPrevious([ remittanceid: params.objid ]); 
 		return params; 
 	} 
 
@@ -348,6 +349,6 @@ class RemittanceService  {
 				it.cashbreakdown = []; 
 				rfEm.create( it ); 
 			} 
-		}
+		} 
 	} 
 } 
