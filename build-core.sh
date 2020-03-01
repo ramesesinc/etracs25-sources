@@ -5,8 +5,8 @@ cd $RUN_DIR/core/etracs25-core
 sudo docker rmi -f ramesesinc/etracs25-core:255.02
 sudo docker build -t ramesesinc/etracs25-core:255.02 .
 cd $RUN_DIR/core/etracs25-services
-sudo docker rmi -f ramesesinc/etracs25-services:255.02.004
-sudo docker build -t ramesesinc/etracs25-services:255.02.004 .
+sudo docker rmi -f ramesesinc/etracs25-services:255.02.005
+sudo docker build -t ramesesinc/etracs25-services:255.02.005 .
 cd $RUN_DIR
 echo ""
 echo "[etracs25-core] finished."
