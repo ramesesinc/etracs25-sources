@@ -28,6 +28,9 @@ class LandTaxReportTaxClearanceService
     @DataContext('cashreceipt')
     def em_cashreceipt
 
+    @DataContext('sys_org')
+    def em_org
+
 
     @ProxyMethod
     public def getReportTypes() {
@@ -86,8 +89,7 @@ class LandTaxReportTaxClearanceService
     @ProxyMethod
     public def createClearance( cert ) {
         validate(cert)
-        def year = dtSvc.serverYear
-        cert.txnno = year + seqSvc.getNextFormattedSeries('RPTTAXCLEARANCE-' + year )
+        updateCertificationNo(cert)
         certSvc.createCertification(cert)
         cert.items.each{
             certSvc.createItem(it)
@@ -112,6 +114,11 @@ class LandTaxReportTaxClearanceService
         return cert 
     }
 
+    @ProxyMethod
+    public def update(entity) {
+        return certSvc.update(entity)
+    }
+
 
     @ProxyMethod
     public def getClearedLedgers(cert) {
@@ -132,7 +139,9 @@ class LandTaxReportTaxClearanceService
             throw new Exception('At least one property must be included.')
         }
 
-        if ('fullypaid' == cert.reporttype.name) {
+        def isSpecialCase = util.toBoolean(var.landtax_taxclearance_allow_special_case_ledger, false)
+
+        if ('fullypaid' == cert.reporttype.name && !isSpecialCase) {
             cert.items.each{
                 if (it.lastyearpaid < cert.year) 
                     throw new Exception('TD No. ' + it.tdno + ' is not cleared for the year ' + cert.year + '.')
@@ -192,5 +201,42 @@ class LandTaxReportTaxClearanceService
         if (cert.items){
             cert.effectivityyear = cert.items[0].effectivityyear
         }
+    }
+
+    void updateCertificationNo(cert) {
+        if (cert.txnno) return
+
+        def pdate = dtSvc.parseCurrentDate()
+
+        def org = em_org.find([root: 1]).first()
+        def key = org.code.replaceAll('-', '')  
+        def format = var.landtax_taxclearance_numbering_format
+        if (format) {
+            def param = [:]
+            param.m = pdate.month.toString().padLeft(2, '0')
+            param.y = pdate.year.toString()[2..3]
+            param.yy = pdate.year.toString()
+            param.o = org.orgcode
+            
+            def keys = evalFormat(format, param, 's')
+            def seqno = seqSvc.getNextFormattedSeriesA('RPTTAXCLEARANCE-' + keys.join(''), 3)
+
+            param.s = seqno
+            def seqnos = evalFormat(format, param, null)
+            cert.txnno = seqnos.join('-')
+        } else {
+            cert.txnno = pdate.year + seqSvc.getNextFormattedSeries('RPTTAXCLEARANCE-' + pdate.year )
+        }
+    }
+
+    def evalFormat(format, param, excludeKey) {
+        def tokens = format.toLowerCase().tokenize('-');
+        def keys = []
+        tokens.each {
+            if (it != excludeKey) {
+                keys << param[it]
+            }
+        }
+        return keys
     }
 }
