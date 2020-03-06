@@ -34,6 +34,13 @@ input.btn {
 input.btn-ok {
 	margin-top:5px;
 }
+
+@media print {
+	.ui-dialog {
+		left: 0px !important;
+		top: 0px !important;
+	}
+}
 </style>
 
 
