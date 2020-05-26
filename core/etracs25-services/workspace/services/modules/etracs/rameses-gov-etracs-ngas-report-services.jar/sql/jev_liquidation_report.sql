@@ -59,17 +59,20 @@ where r.collectionvoucherid = $P{collectionvoucherid}
 [getRPTIncomes]
 select 
   a.code as account_code, a.title as account_title,
-  0.0 as debit, sum(cri.amount) as credit
-from remittance r 
-  inner join cashreceipt cr on cr.remittanceid = r.objid 
-  inner join rptpayment rp on rp.receiptid = cr.objid 
-  inner join cashreceiptitem cri on cri.receiptid = cr.objid 
-  left join cashreceipt_void v on v.receiptid = cr.objid 
+  0.0 as debit, sum(cri.amount) as credit 
+from ( 
+  select distinct rp.receiptid 
+  from remittance r 
+    inner join cashreceipt cr on cr.remittanceid = r.objid 
+    inner join rptpayment rp on rp.receiptid = cr.objid 
+    left join cashreceipt_void v on v.receiptid = cr.objid 
+  where r.collectionvoucherid = $P{collectionvoucherid} 
+    and v.objid is null 
+)t1 
+  inner join cashreceiptitem cri on cri.receiptid = t1.receiptid 
   left join account_item_mapping aim on (aim.maingroupid = $P{maingroupid} and aim.itemid = cri.item_objid) 
   left join account a on a.objid = aim.acctid 
-where r.collectionvoucherid = $P{collectionvoucherid} 
-  and cri.item_fund_objid = $P{fundid} 
-  and v.objid is null 
+where cri.item_fund_objid = $P{fundid} 
 group by a.code, a.title 
 order by a.code, a.title 
 
