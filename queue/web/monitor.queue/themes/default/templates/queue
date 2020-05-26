@@ -10,8 +10,9 @@
 
 	@css("queue")
 	@css("responsive")
-	@css(value: "queue-monitor", ver: 1.1)
-	
+	@css(value: "queue-monitor", ver: "auto")
+	@css(value: "queue-custom", ver: "auto")
+
 	@page-imports()
 </head>
 

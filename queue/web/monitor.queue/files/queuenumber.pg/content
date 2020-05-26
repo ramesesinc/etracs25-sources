@@ -43,6 +43,7 @@ input.btn-ok {
 }
 </style>
 
+${_style_custom}
 
 <div class="printable">
 	<p class="queue-number-title">Queue Ticket Number</p>
