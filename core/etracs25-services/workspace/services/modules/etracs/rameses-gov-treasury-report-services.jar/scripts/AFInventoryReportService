@@ -158,9 +158,13 @@ class AFInventoryReportService {
 				if ( fo.qtyissued == 0 ) fo.qtyissued = null; 
 				if ( fo.qtyending == 0 ) fo.qtyending = null; 
 				if ( fo.qtyreceivedcost == 0 ) fo.qtyreceivedcost = null; 
+				if ( fo.qtyreceivedstub == 0 ) fo.qtyreceivedstub = null; 
 				if ( fo.qtybegincost == 0 ) fo.qtybegincost = null; 
+				if ( fo.qtybeginstub == 0 ) fo.qtybeginstub = null; 
 				if ( fo.qtyissuedcost == 0 ) fo.qtyissuedcost = null; 
+				if ( fo.qtyissuedstub == 0 ) fo.qtyissuedstub = null; 
 				if ( fo.qtyendingcost == 0 ) fo.qtyendingcost = null; 
+				if ( fo.qtyendingstub == 0 ) fo.qtyendingstub = null; 
 				if ( fo.costperstub == 0 ) fo.costperstub = null; 
 
 				results << fo; 
@@ -213,9 +217,13 @@ class AFInventoryReportService {
 			if ( fo.qtycancelled == 0 ) fo.qtycancelled = null; 
 			if ( fo.qtyending == 0 ) fo.qtyending = null; 
 			if ( fo.qtyreceivedcost == 0 ) fo.qtyreceivedcost = null; 
+			if ( fo.qtyreceivedstub == 0 ) fo.qtyreceivedstub = null; 
 			if ( fo.qtybegincost == 0 ) fo.qtybegincost = null; 
+			if ( fo.qtybeginstub == 0 ) fo.qtybeginstub = null; 
 			if ( fo.qtyissuedcost == 0 ) fo.qtyissuedcost = null; 
+			if ( fo.qtyissuedstub == 0 ) fo.qtyissuedstub = null; 
 			if ( fo.qtyendingcost == 0 ) fo.qtyendingcost = null; 
+			if ( fo.qtyendingstub == 0 ) fo.qtyendingstub = null; 
 			if ( fo.costperstub == 0 ) fo.costperstub = null; 
 
 			results << fo; 
