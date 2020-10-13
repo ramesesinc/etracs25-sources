@@ -1,4 +1,4 @@
 provider=websocket
-ws.host=localhost:8061
+ws.host=${notification_ws_host}:8061
 ws.protocol=user
 ws.enabled=true

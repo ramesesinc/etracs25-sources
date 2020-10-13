@@ -13,5 +13,5 @@ env.apikey=XXXXXXX
 [receiver]
 provider=websocket
 ws.host=${cloud.host}:8160
-ws.protocol=137
+ws.protocol=XXX
 ws.enabled=false
