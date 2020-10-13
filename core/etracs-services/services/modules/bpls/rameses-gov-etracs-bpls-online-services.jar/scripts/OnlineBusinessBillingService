@@ -1,6 +1,7 @@
-import com.rameses.annotations.*; 
+import com.rameses.annotations.*;
+import com.rameses.util.*;
 
-class BusinessOnlinePaymentInterceptor {
+class OnlineBusinessBillingService {
 
 	@Service("BusinessCashReceiptService")
 	def svc;
@@ -20,12 +21,22 @@ class BusinessOnlinePaymentInterceptor {
 	@Service("NumberService")
 	def numSvc;
 
+	@ActiveDB('online_bpls')
+	def online_bpls;
+
 	private def generateBilling( def o ) {
-		def app = appEm.find( [appno: o.appno ]).first();
-		if(!app) {
+		def app = appEm.find([ appno: o.appno ]).first(); 
+		if ( !app ) {
+			def unapp = online_bpls.findUnpaidAppByBIN([ bin: o.appno ]); 
+			if ( unapp?.appno ) {
+				app = appEm.find([ appno: unapp.appno ]).first(); 	
+			} 
+		} 
+
+		if ( !app ) { 
 			throw new Exception("Cannot find business application no " + o.appno);
-		}	
-		if(!app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
+		} 
+		if (!app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
 			throw new Exception("Application is not in payment state");
 		}
 
@@ -46,16 +57,13 @@ class BusinessOnlinePaymentInterceptor {
 		return z;
 	}
 
-	@After(pattern="OnlinePaymentService.getBilling", eval="#{args[0].txntype=='bpls'}")
-	public void fetchBilling( def evt ) { 
-		def o = evt.args[0];
-		o.appno = o.refno;
-		
-		def result = evt.result;
-		def z = generateBilling(o);
+	@ProxyMethod
+	public def getBilling( def o ) {
+		println 'bpls getBilling -> '+ o; 
 
-		def p = [:];
-		p.info = [
+		o.appno = o.refno;
+		def z = generateBilling( o );
+		def p = [
 			ownername: z.app.ownername, 
 			tradename: z.app.tradename, 
 			address: z.app.businessaddress, 
@@ -63,10 +71,23 @@ class BusinessOnlinePaymentInterceptor {
 			bin: z.app.business.bin, 
 			appdate:z.app.dtfiled, 
 			apptype: z.app.apptype,
-			expirydate:z.expirydate
-		];
+			expirydate:z.expirydate, 
+			email: z.app.business.email,
+			mobileno: z.app.business.mobileno
+		]; 
+
+		p.payer = [
+			objid: z.app.business.owner?.objid, 
+			name: z.app.business.owner?.name 
+		]; 
+		p.refid = z.app.objid; 
+		p.refno = z.app.appno; 
+		p.amount = z.amount;
+		p.txntype = 'bpls'; 
+		p.txntypename = 'Business Permit'; 
+		
 		if( o.showdetails ) {
-			p.info.items = z.taxfees.collect{[ 
+			p.items = z.taxfees.collect{[ 
 					lobname: it.lob.name, 
 					account:it.account?.title, 
 					amount: numSvc.round(it.amtdue), 
@@ -74,70 +95,38 @@ class BusinessOnlinePaymentInterceptor {
 					surcharge:numSvc.round(it.surcharge),
 					interest:numSvc.round(it.interest),
 					total: numSvc.round(it.total) 
-			]};
+			]} 
 		}
-
-		p.amount = z.amount;
-		result.putAll(p); 
+		return p;
 	}
 
-	@Before(pattern="OnlinePaymentService.createPaymentOrder", eval="#{args[0].txntype=='bpls'}")
-	public void createPaymentOrder( def evt ) { 
-		def o = evt.args[0];
-		o.appno = o.refno;
-		def z = generateBilling(o);
-
-		def m = [:];
-		m.payer = z.app.business.owner;
-		m.paidby = z.app.tradename;
-		m.paidbyaddress = z.app.businessaddress;
-		m.particulars = 'Business Permit';
-		m.refid = z.app.objid;
-		m.refno = o.appno;
-		m.info = z.payment;
-		m.amount = z.amount;
-		m.txntype = 'bpls';
-		m.txntypename = 'Business Permit';
-		m.expirydate = z.expirydate;
-
-		//retrieve the contactinfo
-		def contact = [:];
-		def c = appEm.find( [objid: z.app.objid ] ).select("business.*").first();
-		def biz  = c.business;
-		m.mobileno = (biz.mobileno) ? biz.mobileno : biz.owner.mobileno;
-		m.email = (biz.email) ? biz.email : biz.owner.email;
-		m.phoneno = (biz.phoneno) ? biz.phoneno : biz.owner.phoneno;
-		o.info = m;
-
-	}
-
-	@Before(pattern="EORService.post", eval="#{args[0].txntype=='bpls'}")
-	public void postPayment( evt ) { 
-		def o = evt.args[0];
+	@ProxyMethod
+	public def verifyPayment(  def o ) {
+		println 'bpls verifyPayment -> '+ o; 
 
 		def r = [:]
 		r.appno = o.refno;
 		if ( o.info?.qtr ) r.qtr = o.info.qtr; 
-
 		def z = generateBilling( r );
 		if ( o.amount != z.amount ) 
 			throw new Exception('Bill amount has changed from '+ o.amount +' to '+ z.amount); 
-
 		o.businessid = z.app.business.objid;
 		o.applicationid = z.app.objid;
 		o.appyear = z.app.appyear; 
 		o.taxfees = z.taxfees;
 		o.expirydate = z.expirydate; 
-		o.items = z.items; 
+		o.items = z.items;
+		return o;
 	}
 
-	@After(pattern="EORService.post", eval="#{args[0].txntype=='bpls'}")
-	public void afterPostPayment( def evt ) { 
-		def o = evt.args[0]; 
-		def res = evt.result; 
+	@ProxyMethod
+	public void postPayment(  def eor ) {
+		println 'bpls postPayment -> '+ eor; 
+
+		def o = eor.paymentorder;
 		o.reftype = 'eor';
-		o.receiptno = res.receiptno; 
-		o.receiptdate = res.receiptdate;
+		o.receiptno = eor.receiptno; 
+		o.receiptdate = eor.receiptdate;
 		postPaymentSvc.postPayment( o ); 
-	} 
+	}
 }
