@@ -9,7 +9,6 @@ class TerminalAdminService {
 	@Service('QueryService')
 	def querySvc; 
 
-
 	@ProxyMethod 
 	public void generateKeys( param ) {
 		if ( !param.size ) throw new Exception('Please specify size');
@@ -73,5 +72,5 @@ class TerminalAdminService {
 
 		param.where = [ wheres.join(' AND '), wheremap ];
 		return querySvc.getList( param ); 
-	} 	
+	} 
 }
