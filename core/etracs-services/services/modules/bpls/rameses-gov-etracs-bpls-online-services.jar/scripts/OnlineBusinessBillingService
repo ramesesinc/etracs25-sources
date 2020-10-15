@@ -27,6 +27,7 @@ class OnlineBusinessBillingService {
 	private def generateBilling( def o ) {
 		def app = appEm.find([ appno: o.appno ]).first(); 
 		if ( !app ) {
+			// try to find via BIN 
 			def unapp = online_bpls.findUnpaidAppByBIN([ bin: o.appno ]); 
 			if ( unapp?.appno ) {
 				app = appEm.find([ appno: unapp.appno ]).first(); 	
