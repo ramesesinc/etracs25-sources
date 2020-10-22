@@ -22,7 +22,7 @@ where r.collectionvoucherid = $P{collectionvoucherid}
   and cri.item_fund_objid = $P{fundid} 
   and cr.formno <> '56' 
   and v.objid is null 
-  and ifnull(ct.handler,'') <> 'rpt' 
+  and isnull(ct.handler,'') <> 'rpt' 
 group by a.code, a.title 
 order by a.code, a.title  
 
