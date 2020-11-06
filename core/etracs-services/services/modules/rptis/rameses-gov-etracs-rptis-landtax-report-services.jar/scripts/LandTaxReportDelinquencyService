@@ -46,6 +46,7 @@ class LandTaxReportDelinquencyService
 	@Async
 	@ProxyMethod
 	public def buildReport( params ) {
+
 		validate(params)
 
 		def currentyear = dtSvc.getServerYear(); 

@@ -8,13 +8,6 @@ select
     sum(0.0) as brgypenalty,
     sum(case when cra.revperiod <> 'advance' and cra.revtype in ('basicidle','basicidleint') then cra.amount else 0 end) as brgytotal,
 
-    sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidle' and cra.sharetype = 'city' then cra.amount else 0 end) as citycurrshare,
-    sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidleint' and cra.sharetype = 'city' then cra.amount else 0 end) as citycurrsharepenalty,
-    sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basicidle' and cra.sharetype = 'city' then cra.amount else 0 end) as cityprevshare,
-    sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basicidleint' and cra.sharetype = 'city' then cra.amount else 0 end) as cityprevsharepenalty,
-    sum(0.0) as citypenaltyshare,
-    sum(case when cra.revperiod <> 'advance' and cra.revtype in ('basicidle','basicidleint') and cra.sharetype = 'city' then cra.amount else 0 end) as citysharetotal,
-
     sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidle' and cra.sharetype = 'municipality' then cra.amount else 0 end) as municurrshare,
     sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidleint' and cra.sharetype = 'municipality' then cra.amount else 0 end) as municurrsharepenalty,
     sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basicidle' and cra.sharetype = 'municipality' then cra.amount else 0 end) as muniprevshare,
@@ -44,11 +37,6 @@ group by b.name
 
 [getIdleLandShares]
 select 
-    sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidle' and cra.sharetype = 'city' then cra.amount else 0 end) as citycurrshare,
-    sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basicidle' and cra.sharetype = 'city' then cra.amount else 0 end) as cityprevshare,
-    sum(0.0) as citypenaltyshare,
-    sum(case when cra.revperiod <> 'advance' and cra.revtype = 'basicidle' and cra.sharetype = 'city' then cra.amount else 0 end) as citysharetotal,
-
     sum(case when cra.revperiod = 'current' and cra.revtype = 'basicidle' and cra.sharetype = 'municipality' then cra.amount else 0 end) as municurrshare,
     sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basicidle' and cra.sharetype = 'municipality' then cra.amount else 0 end) as muniprevshare,
     sum(0.0) as munipenaltyshare,
@@ -79,10 +67,6 @@ select
     sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'barangay' then cra.amount else 0 end) as brgyprevshare,
     sum(case when cra.revtype = 'basicint' and cra.sharetype = 'barangay' then cra.amount else 0 end) as brgypenaltyshare,
 
-    sum(case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype in ('city') then cra.amount else 0 end) as citycurrshare,
-    sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype in ('city') then cra.amount else 0 end) as cityprevshare,
-    sum(case when cra.revtype = 'basicint' and cra.sharetype in ('city') then cra.amount else 0 end) as citypenaltyshare,
-
     sum(case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype in ('province', 'municipality') then cra.amount else 0 end) as provmunicurrshare,
     sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype in ('province', 'municipality') then cra.amount else 0 end) as provmuniprevshare,
     sum(case when cra.revtype = 'basicint' and cra.sharetype in ('province', 'municipality') then cra.amount else 0 end) as provmunipenaltyshare
@@ -106,9 +90,6 @@ order by b.name
 select
     b.name as barangay,
     sum(t.brgytotalshare) as brgytotalshare,
-    sum(t.citycurrshare) as citycurrshare,
-    sum(t.cityprevshare) as cityprevshare,
-    sum(t.citypenaltyshare) as citypenaltyshare,
     sum(t.municurrshare) as municurrshare,
     sum(t.muniprevshare) as muniprevshare,
     sum(t.munipenaltyshare) as munipenaltyshare,
@@ -116,17 +97,12 @@ select
     sum(t.provprevshare) as provprevshare,
     sum(t.provpenaltyshare) as provpenaltyshare,
     sum(t.brgytotalshare + t.municurrshare + t.muniprevshare + t.munipenaltyshare +
-            t.provcurrshare + t.provprevshare + t.provpenaltyshare + 
-            t.citycurrshare + t.cityprevshare + t.citypenaltyshare 
+            t.provcurrshare + t.provprevshare + t.provpenaltyshare
     ) as grandtotal
 from (
     select 
         b.objid as barangayid,
         case when cra.sharetype = 'barangay' then cra.amount else 0 end as brgytotalshare,
-
-        case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype = 'city' then cra.amount else 0 end as citycurrshare,
-        case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'city' then cra.amount else 0 end as cityprevshare,
-        case when cra.revtype = 'basicint' and cra.sharetype = 'city' then cra.amount else 0 end as citypenaltyshare,
 
         case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype = 'municipality' then cra.amount else 0 end as municurrshare,
         case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'municipality' then cra.amount else 0 end as muniprevshare,
@@ -153,18 +129,13 @@ group by b.name
 
 [getBasicSharesSummary]   
 select xx.*, 
-    (brgytotalshare + munitotalshare + provtotalshare + citytotalshare) as totalshare 
+    (brgytotalshare + munitotalshare + provtotalshare) as totalshare 
 from ( 
     select 
         sum(case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype = 'barangay' then cra.amount else 0 end) as brgycurrshare,
         sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'barangay' then cra.amount else 0 end) as brgyprevshare,
         sum(case when cra.revtype = 'basicint' and cra.sharetype = 'barangay' then cra.amount else 0 end) as  brgypenaltyshare,
         sum(case when cra.sharetype = 'barangay' then cra.amount else 0 end) as  brgytotalshare,
-
-        sum(case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype = 'city' then cra.amount else 0 end) as  citycurrshare,
-        sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'city' then cra.amount else 0 end) as  cityprevshare,
-        sum(case when cra.revtype = 'basicint' and cra.sharetype = 'city' then cra.amount else 0 end) as  citypenaltyshare,
-        sum(case when cra.sharetype = 'city' then cra.amount else 0 end) as  citytotalshare,
 
         sum(case when cra.revperiod = 'current' and cra.revtype = 'basic' and cra.sharetype = 'municipality' then cra.amount else 0 end) as  municurrshare,
         sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'basic' and cra.sharetype = 'municipality' then cra.amount else 0 end) as  muniprevshare,
@@ -189,11 +160,6 @@ from (
 
 [getSefShares]
 select 
-    sum(case when cra.revperiod = 'current' and cra.revtype = 'sef' and cra.sharetype = 'city' then cra.amount else 0 end) as citycurrshare,
-    sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'sef' and cra.sharetype = 'city' then cra.amount else 0 end) as cityprevshare,
-    sum(case when cra.revtype = 'sefint' and cra.sharetype = 'city' then cra.amount else 0 end) as citypenaltyshare,
-    sum(case when cra.revtype in ('sef', 'sefint') and cra.sharetype = 'city' then cra.amount else 0 end) as citysharetotal,
-
     sum(case when cra.revperiod = 'current' and cra.revtype = 'sef' and cra.sharetype = 'municipality' then cra.amount else 0 end) as municurrshare,
     sum(case when cra.revperiod in ('previous', 'prior') and cra.revtype = 'sef' and cra.sharetype = 'municipality' then cra.amount else 0 end) as muniprevshare,
     sum(case when cra.revtype = 'sefint' and cra.sharetype = 'municipality' then cra.amount else 0 end) as munipenaltyshare,
@@ -214,7 +180,7 @@ where ${filter}
     and cra.revtype in ('sef', 'sefint')
 
 
-[getBrgyShares]
+[getStandardBrgyShares]
 select  
     b.name as brgyname, 
     sum(case when cra.revperiod='current' and revtype='basic' then cra.amount + cra.discount else 0.0 end )as basiccurrentamt,     
@@ -228,8 +194,8 @@ from remittance rem
     inner join cashreceipt cr on cr.remittanceid = rem.objid 
     inner join rptpayment rp on cr.objid = rp.receiptid 
     inner join rptpayment_share cra on rp.objid = cra.parentid
-    inner join itemaccount ia on cra.item_objid = ia.objid 
-    left join barangay b on ia.org_objid = b.objid
+    left join rptledger rl on rp.refid = rl.objid
+    left join barangay b on rl.barangayid = b.objid 
 where ${filter} 
     and cr.objid not in (select receiptid from cashreceipt_void where receiptid=cr.objid) 
     and cra.sharetype ='barangay'
@@ -255,13 +221,11 @@ where cr.receiptdate >= $P{fromdate} and cr.receiptdate < $P{todate}
 group by b.objid  
 
 
-
-
-
-[getAdvanceCollectionsByBrgy]
+[getAdvanceBrgySharesAnnual]
 select  
-    rpi.year, 
-    b.objid as brgyid,
+	rpi.year, 
+	b.indexno as brgyno,
+    b.name as brgyname, 
     sum(rpi.amount) as basic,     
     sum(rpi.discount) as disc,     
     sum(rpi.amount - rpi.discount) as total
@@ -269,54 +233,34 @@ from remittance rem
     inner join collectionvoucher cv on cv.objid = rem.collectionvoucherid 
     inner join cashreceipt cr on cr.remittanceid = rem.objid 
     inner join rptpayment rp on cr.objid = rp.receiptid 
-    inner join rptpayment_item rpi on rp.objid = rpi.parentid 
-    inner join rptledger rl on rp.refid = rl.objid 
+    inner join rptpayment_item rpi on rp.objid = rpi.parentid
+    inner join rptledger rl on rp.refid = rl.objid
     inner join barangay b on rl.barangayid = b.objid 
 where ${filter} 
     and cr.objid not in (select receiptid from cashreceipt_void where receiptid=cr.objid) 
     and rpi.revperiod = 'advance'
-    and rpi.revtype like 'basic' 
-group by rpi.year, b.objid
+group by rpi.year, b.indexno, b.name
+order by rpi.year, b.indexno 
 
-[getAdvanceBrgySharesAnnual]
+
+[getAdvanceBrgySharesQtrly]
 select  
-    rps.year, 
-    b.objid as brgyid, 
-    sum(rps.amount + rps.discount) as brgybasic,
-    sum(rps.discount) as brgydisc,
-    sum(rps.amount) as brgyshare
+	rpi.year, 
+	rpi.qtr,
+    b.indexno as brgyno,
+    b.name as brgyname, 
+    sum(rpi.amount) as basic,     
+    sum(rpi.discount) as disc,     
+    sum(rpi.amount - rpi.discount) as total
 from remittance rem 
     inner join collectionvoucher cv on cv.objid = rem.collectionvoucherid 
     inner join cashreceipt cr on cr.remittanceid = rem.objid 
     inner join rptpayment rp on cr.objid = rp.receiptid 
-    inner join rptpayment_share rps on rp.objid = rps.parentid
-    inner join itemaccount ia on rps.item_objid = ia.objid 
-    inner join barangay b on ia.org_objid = b.objid 
-where ${filter} 
-    and cr.objid not in (select receiptid from cashreceipt_void where receiptid=cr.objid) 
-    and rps.revperiod = 'advance'
-    and rps.revtype in ('basic', 'basicint')
-    and rps.sharetype = 'barangay'
-group by rps.year, b.objid 
-
-[getAdvanceLguSharesAnnual]
-select  
-    rps.year, 
-    b.objid as brgyid, 
-    sum(rps.amount + rps.discount) as lgubasic,     
-    sum(rps.discount) as lgudisc,     
-    sum(rps.amount) as lgushare
-from remittance rem 
-    inner join collectionvoucher cv on cv.objid = rem.collectionvoucherid 
-    inner join cashreceipt cr on cr.remittanceid = rem.objid 
-    inner join rptpayment rp on cr.objid = rp.receiptid 
-    inner join rptpayment_share rps on rp.objid = rps.parentid
-    inner join rptledger rl on rp.refid = rl.objid 
+    inner join rptpayment_item rpi on rp.objid = rpi.parentid
+    inner join rptledger rl on rp.refid = rl.objid
     inner join barangay b on rl.barangayid = b.objid 
 where ${filter} 
     and cr.objid not in (select receiptid from cashreceipt_void where receiptid=cr.objid) 
-    and rps.revperiod = 'advance'
-    and rps.revtype in ('basic', 'basicint')
-    and rps.sharetype <> 'barangay'
-group by rps.year, b.objid 
-
+    and rpi.revperiod = 'advance'
+group by rpi.year, rpi.qtr, b.indexno, b.name
+order by rpi.year, rpi.qtr, b.indexno 

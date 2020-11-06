@@ -63,12 +63,3 @@ from (
 group by 
   x.classification_objid,
   x.actualuse_objid
-
-
-[getLedgerPayments]  
-select 
-  rp.*,
-  (select max(partialled) from rptpayment_item where parentid = rp.objid) as partialled
-from rptpayment rp 
-where refid = $P{objid}
-order by rp.fromyear desc, rp.fromqtr desc, rp.receiptno desc

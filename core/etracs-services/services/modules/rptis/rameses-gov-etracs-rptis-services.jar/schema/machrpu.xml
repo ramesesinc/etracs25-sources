@@ -58,7 +58,5 @@
         <field name="newlyinstalled"  type="boolean" />
         <field name="autodepreciate"  type="boolean" />
         <field name="taxable"  type="boolean" />
-        <field name="smvid"/>
-        <complex name="params" serializer="default" />
     </element>
 </schema>

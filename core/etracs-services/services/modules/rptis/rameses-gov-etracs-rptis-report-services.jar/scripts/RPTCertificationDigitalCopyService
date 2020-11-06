@@ -10,7 +10,6 @@ class RPTCertificationFAASVerificationService
 
     @ProxyMethod
     public def createCertification( cert ) {
-        cert.includemembers = false
         certSvc.createCertification(cert)
         return openCertification(cert.objid)
     }

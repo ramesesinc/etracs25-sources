@@ -13,10 +13,10 @@ class RPTCertificationMultipleService
 	
 	@ProxyMethod
 	public def createCertification( cert ) {
-		certSvc.buildFilter(cert)
 		certSvc.createCertification(cert)
+		certSvc.buildFilter(cert)
 		em.insertMultipleItems(cert)
-		cert.items = getItems(cert)
+		cert.items = getMultipleItems(cert)
 		certSvc.buildFootNotes(cert)
 		certSvc.makeHtmlSafe(cert)
 		return cert 
@@ -27,31 +27,19 @@ class RPTCertificationMultipleService
 		def cert = certSvc.openCertification(objid)
 		if (! cert ) 
 			throw new Exception('Certification does not exist or has already been deleted.')
-		cert.items = getItems(cert)
+		cert.items = getMultipleItems(cert)
 		certSvc.buildFootNotes(cert)
 		return cert 
 	}
 
-	def getItems(cert){
-		cert.orderby = 'ORDER BY suffix,tdno'
-		if (cert.includemembers) {
-			cert.orderby = 'ORDER BY owner_name,suffix,tdno'
-		}
+	def getMultipleItems(cert){
 		def items = em.getMultipleItems(cert).each{
 			it.street = (it.street ? it.street : it.barangay)
 			buildDescription(it)
 		}
 		if (!items) 
 			throw new Exception('There are no land properties registered for this taxpayer.')
-		
-		if (cert.includemembers) {
-			// move taxpayer properties to the top 
-			def list = []
-			list += items.findAll{ it.taxpayerid == cert.taxpayerid }
-			list += items.findAll{ it.taxpayerid != cert.taxpayerid }
-			return list
-		}
-		return items
+		return items 
 	}
 
 	void buildDescription(item){

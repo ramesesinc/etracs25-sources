@@ -16,11 +16,10 @@ class ConsolidationRequirementInterceptor
 	public void initRequirements( evt ) {
 		def entity = evt.result 
 		def info = evt.args[0] 
-
 		def requirements = ruleSvc.getRequirements([
 			txntype 		: entity.txntype,
 			txntypemode 	: info.txntypemode,
-			attributes		: info.attributes
+			attributes		: info._info.attributes 
 		])
 
 		requirements.unique().each{
