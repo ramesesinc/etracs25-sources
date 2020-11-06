@@ -21,23 +21,12 @@ class OnlineBusinessBillingService {
 	@Service("NumberService")
 	def numSvc;
 
-	@ActiveDB('online_bpls')
-	def online_bpls;
-
 	private def generateBilling( def o ) {
-		def app = appEm.find([ appno: o.appno ]).first(); 
-		if ( !app ) {
-			// try to find via BIN 
-			def unapp = online_bpls.findUnpaidAppByBIN([ bin: o.appno ]); 
-			if ( unapp?.appno ) {
-				app = appEm.find([ appno: unapp.appno ]).first(); 	
-			} 
-		} 
-
-		if ( !app ) { 
+		def app = appEm.find( [appno: o.appno ]).first();
+		if(!app) {
 			throw new Exception("Cannot find business application no " + o.appno);
-		} 
-		if (!app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
+		}	
+		if(!app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
 			throw new Exception("Application is not in payment state");
 		}
 
@@ -60,11 +49,10 @@ class OnlineBusinessBillingService {
 
 	@ProxyMethod
 	public def getBilling( def o ) {
-		println 'bpls getBilling -> '+ o; 
-
 		o.appno = o.refno;
-		def z = generateBilling( o );
-		def p = [
+		def z = generateBilling(o);
+		def p = [:];
+		p.info = [
 			ownername: z.app.ownername, 
 			tradename: z.app.tradename, 
 			address: z.app.businessaddress, 
@@ -74,21 +62,11 @@ class OnlineBusinessBillingService {
 			apptype: z.app.apptype,
 			expirydate:z.expirydate, 
 			email: z.app.business.email,
-			mobileno: z.app.business.mobileno
-		]; 
-
-		p.payer = [
-			objid: z.app.business.owner?.objid, 
-			name: z.app.business.owner?.name 
-		]; 
-		p.refid = z.app.objid; 
-		p.refno = z.app.appno; 
-		p.amount = z.amount;
-		p.txntype = 'bpls'; 
-		p.txntypename = 'Business Permit'; 
-		
+			mobileno: z.app.business.mobileno,
+			amount: z.amount,
+		];
 		if( o.showdetails ) {
-			p.items = z.taxfees.collect{[ 
+			p.info.items = z.taxfees.collect{[ 
 					lobname: it.lob.name, 
 					account:it.account?.title, 
 					amount: numSvc.round(it.amtdue), 
@@ -96,15 +74,14 @@ class OnlineBusinessBillingService {
 					surcharge:numSvc.round(it.surcharge),
 					interest:numSvc.round(it.interest),
 					total: numSvc.round(it.total) 
-			]} 
+			]};
 		}
+		p.amount = z.amount;
 		return p;
 	}
 
 	@ProxyMethod
 	public def verifyPayment(  def o ) {
-		println 'bpls verifyPayment -> '+ o; 
-
 		def r = [:]
 		r.appno = o.refno;
 		if ( o.info?.qtr ) r.qtr = o.info.qtr; 
@@ -121,13 +98,17 @@ class OnlineBusinessBillingService {
 	}
 
 	@ProxyMethod
-	public void postPayment(  def eor ) {
-		println 'bpls postPayment -> '+ eor; 
-
-		def o = eor.paymentorder;
-		o.reftype = 'eor';
-		o.receiptno = eor.receiptno; 
-		o.receiptdate = eor.receiptdate;
-		postPaymentSvc.postPayment( o ); 
+	public void postPayment(  def eor, def bill ) {
+		bill.reftype = 'eor';
+		bill.receiptno = eor.receiptno;
+		bill.receiptdate = eor.receiptdate;
+		postPaymentSvc.postPayment( bill ); 
 	}
+
+    @ProxyMethod
+	public def getEmailAttachments( eor ) {
+        return []
+    }
+
+
 }

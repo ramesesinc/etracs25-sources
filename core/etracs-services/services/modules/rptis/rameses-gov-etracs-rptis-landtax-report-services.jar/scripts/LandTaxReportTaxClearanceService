@@ -25,11 +25,17 @@ class LandTaxReportTaxClearanceService
     @Service('ReportParameterService')
     def paramSvc 
 
+    @Service()
+    def self
+
     @DataContext('cashreceipt')
     def em_cashreceipt
 
     @DataContext('sys_org')
     def em_org
+
+    @DataContext("rptcertification_online")
+    def em_cert_online
 
 
     @ProxyMethod
@@ -96,7 +102,7 @@ class LandTaxReportTaxClearanceService
         }
         cert.reporttypename = cert.reporttype.name 
         em.insertTaxClearance(cert)
-        return openClearance(cert.objid)
+        return self.openClearance(cert.objid)
     }
 
     
@@ -119,6 +125,15 @@ class LandTaxReportTaxClearanceService
         return certSvc.update(entity)
     }
 
+    @ProxyMethod
+    public def getOnlineIssuedClearance(params) {
+        def cert = em_cert_online.find([refid: params.refid]).first()
+        if (!cert) throw new Exception("Online certification payment does not exist or has been deleted.")
+        def clearance = openClearance(cert.objid)
+        clearance.qrcode = getQrCodeData(clearance)
+        updateLguInfo(clearance)
+        return clearance
+    }
 
     @ProxyMethod
     public def getClearedLedgers(cert) {
@@ -160,6 +175,8 @@ class LandTaxReportTaxClearanceService
     }
 
     void loadPaymentInfo(cert){
+        def isSpecialCase = util.toBoolean(var.landtax_taxclearance_allow_special_case_ledger, false)
+
         cert.items.each{item ->
             item.rptledgerid = item.refid 
             def p = [
@@ -168,20 +185,37 @@ class LandTaxReportTaxClearanceService
                 year : cert.year,
                 qtr : cert.qtr,
             ]
-            item.payments = em.getPaymentInfo(p)
-            item.payments.each{
-                if (it.ordate){
-                    it.ordate = dtSvc.parse('yyyy-MM-dd', it.ordate)
-                }
 
-                if (it.minqtr == it.maxqtr) 
-                    it.period = it.minqtr + 'Q, ' + it.year 
-                else if (it.minqtr == 1 && it.maxqtr == 4 || (it.minqtr == 0 || it.maxqtr == 0))
-                    it.period = it.year + ''
-                else 
-                    it.period = it.minqtr + 'Q,' + it.year + ' - ' + it.maxqtr + 'Q,' + it.year
+            item.payments = em.getPaymentInfo(p)
+            if (item.payments) {
+                buildItemPaymentInfo(item)
+            } else if (isSpecialCase) {
+                buildSpecialCasePaymentInfo(item)
             }
+            
         }
+    }
+
+    void buildItemPaymentInfo(item) {
+        item.payments.each{
+            if (it.ordate){
+                it.ordate = dtSvc.parse('yyyy-MM-dd', it.ordate)
+            }
+
+            if (it.minqtr == it.maxqtr) 
+                it.period = it.minqtr + 'Q, ' + it.year 
+            else if (it.minqtr == 1 && it.maxqtr == 4 || (it.minqtr == 0 || it.maxqtr == 0))
+                it.period = it.year + ''
+            else 
+                it.period = it.minqtr + 'Q,' + it.year + ' - ' + it.maxqtr + 'Q,' + it.year
+        }
+    }
+
+    void buildSpecialCasePaymentInfo(item) {
+        if (item.totalav <= 0) 
+            item.payments << [info: 'ZERO VALUE']
+        else if (util.toBoolean(item.taxable, false) == false)
+            item.payments << [info: 'EXEMPT PROPERTY']
     }
 
     void buildAdministratorInfo(cert){
@@ -238,5 +272,43 @@ class LandTaxReportTaxClearanceService
             }
         }
         return keys
+    }
+
+    def getQrCodeData(clearance) {
+        def data = [:]
+        data.objid = clearance.objid
+        data.txnno = clearance.txnno
+        data.requestedby = clearance.requestedby
+        data.orno = clearance.orno
+        def b64Str = (new com.rameses.util.Base64Cipher()).encode(data);
+        return "qrcode:" + b64Str
+    }
+
+    /*===================================
+    * LGU Information
+    =====================================*/
+
+    @DataContext("city")
+    def em_city
+
+    @DataContext("province")
+    def em_prov
+
+    @DataContext("municipality")
+    def em_muni
+
+    void updateLguInfo(clearance) {
+        def lgu = em_city.find([root: 1]).first()
+        if (!lgu) lgu = em_prov.find([root: 1]).first()
+        if (!lgu) lgu = em_muni.find([root: 1]).first()
+        if (!lgu) throw new Exception("sys_org root lgu not specified.")
+
+        def org = em_org.find([objid: lgu.objid]).first()
+
+        def parentlgu = [:]
+        if (org.orgclass == "MUNICIPALITY") parentlgu = em_prov.find([objid: lgu.parentid]).first()
+
+        clearance.lguname = lgu.fullname
+        clearance.parentlguname = parentlgu.fullname
     }
 }

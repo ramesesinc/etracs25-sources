@@ -306,14 +306,16 @@ class RPTReceiptService
 	}
 
 	@ProxyMethod
-	public void formatReceiptForPrinting(receipt){
+	public def formatReceiptForPrinting(receipt){
 		receipt._items = em.getItemsForPrinting(receipt)
+		receipt.owners = receipt._items.owner?.name.unique().join(";")
 		util.buildPeriodCovered(receipt._items)
 		receipt.itemcount = receipt._items.size()
 		if(receipt.itemcount > 0) {
 			addLGUInfo(receipt)
 		}
 		receipt.remove('ledgers')
+		return receipt
 	}
 
 
@@ -425,6 +427,9 @@ class RPTReceiptService
 			info.lastqtrpaid = ledger.toqtr 
 		}
 		em_rptledger.where('objid = :objid and lastyearpaid <= :lastyearpaid', info).update(info)
+		if (info.lastqtrpaid == 4) {
+			em_rptledger_item.find([parentid: info.objid, year: info.lastyearpaid]).delete();
+		}
 	}
 
 	def createLedgerPayment(receipt, ledger){
