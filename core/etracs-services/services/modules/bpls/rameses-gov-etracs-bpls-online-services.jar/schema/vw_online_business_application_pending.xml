@@ -1,0 +1,28 @@
+<schema adapter="main">
+	<element tablename="vw_online_business_application_pending">
+		<field name="objid" primary="true"/>
+		<field name="state" />
+		<field name="dtcreated" />
+		<field name="createdby_objid" />
+		<field name="createdby_name" />
+		<field name="controlno" />
+		<field name="apptype" />
+		<field name="appyear" />
+		<field name="appdate" />
+		<field name="prevapplicationid" />
+		<field name="business_objid" />
+		<field name="bin" />
+		<field name="tradename" />
+		<field name="businessname" />
+		<field name="address_text" />
+		<field name="address_objid" />
+		<field name="owner_name" />
+		<field name="owner_address_text" />
+		<field name="owner_address_objid" /> 
+		<field name="yearstarted" /> 
+		<field name="orgtype" />
+		<field name="permittype" />
+		<field name="officetype" />
+		<field name="step" />
+	</element> 
+</schema> 

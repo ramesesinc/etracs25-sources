@@ -1,0 +1,31 @@
+import com.rameses.annotations.*;
+import com.rameses.util.KeyGen;
+
+class OnlineBusinessRenewalInterceptor {
+	
+	@XConnection(dynamic=true)
+	def dyna_xconn;
+
+	@Service 
+	def self; 
+
+	@After(pattern="gdx/OnlineBusinessRenewalService.validateBin")
+	public void afterValidateBin( evt ) {
+		def result = evt.result; 
+		println 'intercept validateBin '
+		if ( result?.email && result?.key ) { 
+			def data = [:]; 
+			data.to = result.email; 
+			data.subject = 'Your Validation Key'; 
+			data.message = 'Your Validation Key is '+ result.key; 
+			self.sendMail( data ); 
+		} 
+	} 
+
+	@Async
+	@ProxyMethod(local=true)
+	public void sendMail( data ) { 
+		def mailConn = dyna_xconn.lookup('primary-email-server'); 
+		mailConn.send( data ); 
+	}
+}
