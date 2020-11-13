@@ -100,6 +100,7 @@ order by t2.txndate
 [getApplicationInfos]
 select 
 	v.objid, v.name, v.caption, v.datatype, 
+	ai.attribute_objid, ai.attribute_name, 
 	case 
 		when v.datatype = 'decimal' then ai.decimalvalue 
 		when v.datatype = 'integer' then ai.intvalue
@@ -107,13 +108,10 @@ select
 		else ai.stringvalue 
 	end as value 
 from business b 
-	inner join business_application a on a.business_objid = b.objid 
-	inner join business_application_info ai on ai.applicationid = a.objid 
+	inner join business_active_info ai on ai.businessid = b.objid 
 	inner join businessvariable v on v.objid = ai.attribute_objid 
 where b.objid = $P{businessid} 
-	and a.appyear = $P{appyear} 
-	and a.apptype in ('NEW','RENEW') 
 	and ai.lob_objid is null 
-	and ai.attribute_objid in ( 
+	and ai.attribute_objid in (  
 		'NUM_EMPLOYEE_MALE', 'NUM_EMPLOYEE_FEMALE', 'NUM_EMPLOYEE_RESIDENT'
 	) 

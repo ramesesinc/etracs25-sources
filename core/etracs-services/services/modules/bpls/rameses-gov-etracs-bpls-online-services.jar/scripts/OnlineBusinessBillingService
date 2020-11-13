@@ -21,12 +21,30 @@ class OnlineBusinessBillingService {
 	@Service("NumberService")
 	def numSvc;
 
-	private def generateBilling( def o ) {
-		def app = appEm.find( [appno: o.appno ]).first();
-		if(!app) {
-			throw new Exception("Cannot find business application no " + o.appno);
-		}	
-		if(!app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
+	@ActiveDB('online_bpls') 
+	def online_bpls;
+
+	private def generateBilling( def o ) { 
+		o.refno = (o.refno ? o.refno : o.appno); 
+
+		def app = appEm.find([ appno: o.refno ]).first();
+		if ( !app ) {
+			def findparam = [ bin: o.refno ]; 
+
+			app = online_bpls.findBIN( findparam ); 
+			if ( !app ) {
+				throw new Exception("Cannot find business application " + o.refno);
+			}
+
+			app = online_bpls.findUnpaidAppByBIN( findparam ); 
+			if ( !app ) {
+				throw new Exception("No unpaid items found");
+			}
+
+			app = appEm.find([ objid: app.objid.toString() ]).first();
+		}
+
+		if ( !app.state.toString().toUpperCase().matches('PAYMENT|RELEASE|COMPLETED')) {
 			throw new Exception("Application is not in payment state");
 		}
 
@@ -49,8 +67,8 @@ class OnlineBusinessBillingService {
 
 	@ProxyMethod
 	public def getBilling( def o ) {
-		o.appno = o.refno;
-		def z = generateBilling(o);
+		def z = generateBilling( o );
+
 		def p = [:];
 		p.info = [
 			ownername: z.app.ownername, 

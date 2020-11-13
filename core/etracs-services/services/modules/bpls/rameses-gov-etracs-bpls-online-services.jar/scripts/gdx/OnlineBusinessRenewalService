@@ -28,14 +28,8 @@ class OnlineBusinessRenewalService {
 	@DataContext('online_business_application') 
 	def online_app; 
 
-	@DataContext('online_business_application_pending')  
-	def online_app_pending; 
-
 	@DataContext('vw_online_business_application') 
 	def vw_online_app; 
-
-	@DataContext('vw_online_business_application_pending') 
-	def vw_online_app_pending; 
 
 	@DataContext('entity_address')
 	def entity_address; 
@@ -208,7 +202,6 @@ class OnlineBusinessRenewalService {
 		} 
 
 		res.controlno = KeyGen.generateAlphanumKey( 'B-'+ res.orgcode +'-', 12 );
-		println '\nopenBin -> '+ res; 		
 		return res; 
   	}
 
@@ -244,7 +237,7 @@ class OnlineBusinessRenewalService {
   		newapp.business = [objid: param.businessid]; 
   		newapp.appyear = param.prevapp.appyear + 1; 
   		newapp.appdate = newapp.dtcreated; 
-		newapp.step = param.step;
+  		newapp.step = (param.step ? param.step : 0);
   		newapp.apptype = 'RENEW'; 
   		newapp.state = 'PENDING'; 
 
@@ -257,21 +250,25 @@ class OnlineBusinessRenewalService {
 		newapp.infos = param.infos; 
 		newapp.controlno = KeyGen.generateAlphanumKey( 'B-'+ param.orgcode +'-', 12 ); 
 		online_app.create( newapp ); 
-		online_app_pending.create( newapp ); 
 
 		updateRequirements( newapp.objid, newapp.lobs ); 
 
-		println '\ncreate -> '+ newapp; 
   		return newapp; 
   	} 
 
-  	private def findApp( param ) {
-  		if ( !param.objid && !param.controlno) throw new Exception('objid or controlno parameter is required'); 
-		if (!param.objid && param.controlno) {
-			param.objid = online_app.select('objid').find([controlno: param.controlno]).val();
-		}
+  	private def findApp( param ) { 
+  		def findby = null; 
+  		if ( param.objid ) {
+  			findby = [ objid: param.objid ]; 
+  		}
+  		else if ( param.controlno ) {
+  			findby = [ controlno: param.controlno ]; 
+  		}
 
-  		def app = vw_online_app.find([ objid: param.objid ]).first(); 
+  		if ( !findby )
+  			throw new Exception('objid parameter is required'); 
+
+  		def app = vw_online_app.find( findby ).first(); 
   		if ( !app ) { 
 			def msg = new StringBuilder(); 
 			msg.append('Business online application record not found. ');
@@ -360,12 +357,11 @@ class OnlineBusinessRenewalService {
   	public def getInfos( param ) { 
   		def app = getApplication( param ); 
 
-		def complexdata = online_app.find([ objid: app.objid ]).select('lobs,infos').first(); 
+		def complexdata = online_app.find([ objid: app.objid ]).select('lobs,infos,requirements').first(); 
 		app.lobs = complexdata?.lobs; 
 		app.infos = complexdata?.infos; 
+		app.requirements = complexdata?.requirements; 
 		complexdata.clear(); 
-
-		println '\ngetInfos -> '+ app;
 		return app; 
 	}
 
@@ -407,7 +403,7 @@ class OnlineBusinessRenewalService {
 			msg.append('\n').append( contact_support_msg ); 
 			throw new Exception( msg.toString()); 
   		} 
-		println '\ngetRequirements -> '+ app.requirements; 
+
 		return app.requirements; 
 	} 
 
@@ -418,7 +414,7 @@ class OnlineBusinessRenewalService {
 
 		def findby = [ objid: param.remove('objid') ]; 
 		online_app.find( findby ).update([ state: 'OPEN', step: param.step ]); 
-		return param;
+		return param;		
 	} 
 
 	@ProxyMethod
