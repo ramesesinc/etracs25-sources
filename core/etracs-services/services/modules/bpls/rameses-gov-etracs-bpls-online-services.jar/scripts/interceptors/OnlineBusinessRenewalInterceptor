@@ -12,7 +12,6 @@ class OnlineBusinessRenewalInterceptor {
 	@After(pattern="gdx/OnlineBusinessRenewalService.validateBin")
 	public void afterValidateBin( evt ) {
 		def result = evt.result; 
-		println 'intercept validateBin '
 		if ( result?.email && result?.key ) { 
 			def data = [:]; 
 			data.to = result.email; 
@@ -20,6 +19,21 @@ class OnlineBusinessRenewalInterceptor {
 			data.message = 'Your Validation Key is '+ result.key; 
 			self.sendMail( data ); 
 		} 
+	} 
+
+	@After(pattern="OnlineBusinessApplicationService.approve")
+	public void afterApprove( evt ) {
+		def result = evt.result; 
+		println 'afterApprove-> '+ result;
+
+		def appno = result.approvedappno; 
+		def msg = 'The online business renewal application you submitted has been approved. \nYour application number is '+ appno; 
+
+		def data = [:]; 
+		data.to = result.email; 
+		data.subject = 'Online Business Renewal Approval'; 
+		data.message = msg; 
+		self.sendMail( data ); 
 	} 
 
 	@Async
