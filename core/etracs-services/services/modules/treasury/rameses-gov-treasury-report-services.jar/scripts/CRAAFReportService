@@ -77,6 +77,13 @@ class CRAAFReportService {
 				o.qtyreceived = 0; 
 			}
 			
+			if ( o.qtyissued > 0 && o.qtybegin > 0 ) {
+				o.beginstartseries = Math.min( o.beginstartseries, o.issuedstartseries ); 
+			}
+			else if ( o.qtyissued > 0 && o.qtyreceived > 0 ) {
+				o.receivedstartseries = Math.min( o.receivedstartseries, o.issuedstartseries ); 
+			}
+
 			o.receivedstartseries = resolveSeriesValue( o.receivedstartseries ); 
 			o.receivedendseries = resolveSeriesValue( o.receivedendseries ); 
 			o.beginstartseries = resolveSeriesValue( o.beginstartseries ); 
