@@ -1,4 +1,4 @@
-FROM ramesesinc/etracs25-core:255.02
+FROM ramesesinc/etracs-core:2.55
 
 COPY /server.conf /apps/server/bin
 COPY /services /apps/server/services

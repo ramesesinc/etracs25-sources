@@ -34,8 +34,16 @@ input.btn {
 input.btn-ok {
 	margin-top:5px;
 }
+
+@media print {
+	.ui-dialog {
+		left: 0px !important;
+		top: 0px !important;
+	}
+}
 </style>
 
+${_style_custom}
 
 <div class="printable">
 	<p class="queue-number-title">Queue Ticket Number</p>

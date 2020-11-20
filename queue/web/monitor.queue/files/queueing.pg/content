@@ -18,6 +18,8 @@ if ( PARAMS.group ) {
 } 
 %>
 
+${_style_custom}
+
 <div class="container"><!-- open container -->
 	<div class="container-fluid"> <!-- open container-fluid -->
 		<div class="row"> <!-- open row -->

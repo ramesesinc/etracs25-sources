@@ -115,3 +115,4 @@ System.getenv().each{ k,v->
 
 ${_script}
 ${_style}
+${_style_custom}
