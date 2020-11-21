@@ -14,7 +14,7 @@ class BusinessApplicationWorkflowInterceptor {
 	@Service 
 	def self; 
 
-	@After( pattern="BusinessApplicationWorkflowService.notifyChangeAppState") 
+	//@After( pattern="BusinessApplicationWorkflowService.notifyChangeAppState") 
 	public void afterNotifyChangeAppState( evt ) {
 		def param = evt.args[0]; 
 
