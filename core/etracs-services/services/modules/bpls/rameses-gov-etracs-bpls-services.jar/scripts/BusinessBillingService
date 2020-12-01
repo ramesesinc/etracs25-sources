@@ -43,8 +43,8 @@ public class BusinessBillingService  {
 	@Service("NumberService")
 	def numSvc;
 
-	@Service(value="SMSService") 
-	def smsSvc; 
+	@Service(dynamic=true)
+	def dynaSvc;
 
 	@ProxyMethod
 	public def generateBilling( def o ) {
@@ -295,6 +295,8 @@ public class BusinessBillingService  {
 
 	@ProxyMethod 
 	void sendSMS( params ) {
+		def smsSvc = dynaSvc.lookup('SMSService', 'notification_proxy'); 
+
 		def data = getBilling( params ); 
 		def datemap = dateSvc.parseDate( data.billdate, null );  
 		def qtrdues = [ 
