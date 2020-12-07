@@ -1,4 +1,4 @@
-FROM ramesesinc/etracs-core:2.5.01
+FROM ramesesinc/etracs-core:2.5.02
 
 COPY /services /apps/server/services
 COPY /templates /apps/server/templates
