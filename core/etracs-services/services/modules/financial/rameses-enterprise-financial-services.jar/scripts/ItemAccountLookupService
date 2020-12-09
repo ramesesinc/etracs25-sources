@@ -10,15 +10,11 @@ class ItemAccountLookupService {
 
 	@ProxyMethod
 	public def lookup( def o ) {
-		println "****** lookup ->" + o;
 		return itemAcctEm.find( o ).first();
 	}
 
 	@ProxyMethod
 	public def lookupByOrg( def o ) {
-		println "****** lookup org ->" + o;
 		return itemAcctEm.find([ parentid: o.parentid ]).where(' org.objid = :orgid ', [ orgid: o.orgid ]).first();
 	}
-
- 
 }
