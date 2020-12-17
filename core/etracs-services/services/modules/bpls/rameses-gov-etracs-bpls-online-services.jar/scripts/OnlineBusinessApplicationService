@@ -179,10 +179,11 @@ class OnlineBusinessApplicationService {
         def tcount = (mcount ? mcount : 0) + (fcount ? fcount : 0); 
         def ai = activeinfos.find{( it.attribute?.objid == 'NUM_EMPLOYEE')} 
         if ( !ai ) {
-        	activeinfos << [ 
+        	ai = [ 
         		type: 'appinfo', phase: 1, level: 0, intvalue: 0, 
         		attribute: [objid: 'NUM_EMPLOYEE', name: 'NUM_EMPLOYEE'] 
         	]; 
+        	activeinfos << ai; 
         } 
         ai.intvalue = tcount; 
     } 
