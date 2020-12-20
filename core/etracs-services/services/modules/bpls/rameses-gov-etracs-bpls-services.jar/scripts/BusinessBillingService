@@ -43,7 +43,7 @@ public class BusinessBillingService  {
 	@Service("NumberService")
 	def numSvc;
 
-	@Service(value="SMSService") 
+	@Service("SMSService") 
 	def smsSvc; 
 
 	@ProxyMethod
