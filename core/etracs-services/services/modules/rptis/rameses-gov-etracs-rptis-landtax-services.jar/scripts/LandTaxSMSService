@@ -38,8 +38,10 @@ class LandTaxSMSService
 
 
 	@ProxyMethod
-	public void sendTaxDueInfo(ledger){
-		println 'sendTaxDueInfo -> ' + ledger.phoneno  
+	public void sendTaxDueInfo(ledger) { 
+		if ( !ledger?.phoneno ) return; 
+
+		println 'sendTaxDueInfo ->  tdno='+ ledger.tdno +', mobileno='+ ledger.phoneno; 
 
 		billSvc.generateBillByLedger(ledger)
 		def bill = em.findLatestBillByLedger(ledger)
