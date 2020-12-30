@@ -27,6 +27,7 @@ class OnlineBusinessApplicationService {
 
 	@Service('DateService') 
 	def dateSvc; 
+	
 
 	@ProxyMethod 
 	public def approve( param ) {
@@ -148,18 +149,10 @@ class OnlineBusinessApplicationService {
 			reqinfo.clear(); 
 		} 
 
-		def taskinfo = [:]; 
-		taskinfo.objid = 'TSK'+ new UID().toString(); 
-		taskinfo.refid = app.objid; 
-		taskinfo.state = 'assign-assessor'; 
-		taskinfo.startdate = rundate; 
-
-		app_task.create( taskinfo ); 
-		taskinfo.clear(); 
-
 		uu.objid = app.objid; 
-		uu.email = bus.email; 
-		return uu; 
+		uu.contact = app.contact; 
+		uu.data = app_builder.findBusinessApp([ objid: app.objid ]); 
+		return uu; 		
 	} 
 
     def toInteger( value ) {
