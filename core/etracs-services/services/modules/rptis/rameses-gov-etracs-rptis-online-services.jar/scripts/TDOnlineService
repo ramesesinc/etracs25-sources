@@ -51,6 +51,7 @@ class TDOnlineService {
         return [
         	objid: faas.objid,
             tdno: faas.tdno,
+            state: faas.state,
             pin: faas.displaypin,
             titleno: faas.titleno,
             cadastrallotno: faas.cadastrallotno,
