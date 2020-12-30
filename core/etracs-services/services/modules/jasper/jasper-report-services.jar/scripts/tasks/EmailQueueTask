@@ -26,6 +26,7 @@ class EmailQueueTask {
 		sendImpl( list, { o-> 
 			def mailConn = dyna_xconn.lookup( o.connection ? o.connection : DEFAULT_CONNECTION ); 
 			mailConn.send([ to: o.to, subject: o.subject, message: o.message ]); 
+			emailQueue.find([ objid: o.objid ]).delete(); 
 		}); 
 
 		list.clear(); 
