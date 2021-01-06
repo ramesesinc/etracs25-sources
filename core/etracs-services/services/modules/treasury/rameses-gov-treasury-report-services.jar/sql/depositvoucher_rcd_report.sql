@@ -103,7 +103,7 @@ from depositvoucher dv
 where dv.objid = $P{depositvoucherid} 
 	and df.fundid like $P{fundid} 
 group by 
-	dv.objid, dv.createdby_name, concat(ba.bank_code, ' - ', ds.deposittype, ' D/S: Account ', ba.code) 
+	dv.objid, dv.createdby_name, concat(ba.bank_code, ' - ', ds.deposittype, ' D/S: Account ', ba.code), ds.deposittype 
 
 
 [getBankAccounts]
@@ -129,7 +129,7 @@ from depositvoucher dv
 where dv.objid = $P{depositvoucherid} 
 	and ba.objid like $P{bankacctid} 
 group by 
-	dv.objid, dv.createdby_name, concat(ba.bank_code, ' - ', ds.deposittype, ' D/S: Account ', ba.code)
+	dv.objid, dv.createdby_name, concat(ba.bank_code, ' - ', ds.deposittype, ' D/S: Account ', ba.code), ds.deposittype  
 
 
 [getDepositVoucherFundByBankAcct]

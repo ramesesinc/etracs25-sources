@@ -95,7 +95,7 @@ order by ('AF#'+ ci.formno +':'+ ci.collectiontype_name +'-'+ ff.title)
 select 
 	dv.objid as depositvoucherid, dv.createdby_name as cashier_name, 
 	(ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code) as refno, 
-	sum(ds.amount) as amount 
+	sum(ds.amount) as amount, ds.deposittype 
 from depositvoucher dv 
 	inner join depositvoucher_fund df on df.parentid = dv.objid 
 	inner join depositslip ds on ds.depositvoucherfundid = df.objid 
@@ -103,7 +103,7 @@ from depositvoucher dv
 where dv.objid = $P{depositvoucherid} 
 	and df.fundid like $P{fundid} 
 group by 
-	dv.objid, dv.createdby_name, (ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code)
+	dv.objid, dv.createdby_name, (ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code), ds.deposittype
 
 
 [getBankAccounts]
@@ -121,7 +121,7 @@ order by ba.code, ba.title
 select 
 	dv.objid as depositvoucherid, dv.createdby_name as cashier_name, 
 	(ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code) as refno, 
-	sum(ds.amount) as amount 
+	sum(ds.amount) as amount, ds.deposittype  
 from depositvoucher dv 
 	inner join depositvoucher_fund df on df.parentid = dv.objid 
 	inner join depositslip ds on ds.depositvoucherfundid = df.objid 
@@ -129,7 +129,7 @@ from depositvoucher dv
 where dv.objid = $P{depositvoucherid} 
 	and ba.objid like $P{bankacctid} 
 group by 
-	dv.objid, dv.createdby_name, (ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code) 
+	dv.objid, dv.createdby_name, (ba.bank_code +' - '+ ds.deposittype +' D/S: Account '+ ba.code), ds.deposittype
 
 
 [getDepositVoucherFundByBankAcct]
