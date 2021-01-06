@@ -50,8 +50,8 @@ app:
     # treasury
     - { order: 220, version: 2.50, file: "modules/treasury/rameses-treasury-common.jar" }
     - { order: 221, version: 2.50, file: "modules/treasury/rameses-gov-depositslip.jar" }
-    - { order: 222, version: 2.52, file: "modules/treasury/rameses-gov-treasury.jar" }
-    - { order: 223, version: 2.52, file: "modules/treasury/rameses-gov-treasury-report.jar" }
+    - { order: 222, version: 2.53, file: "modules/treasury/rameses-gov-treasury.jar" }
+    - { order: 223, version: 2.53, file: "modules/treasury/rameses-gov-treasury-report.jar" }
     - { order: 224, version: 2.50, file: "modules/treasury/rameses-gov-treasury-tool.jar" }
     # rptis
     - { order: 240, version: 2.50, file: "modules/rptis/rameses-gov-etracs-rptis-landtax.jar" }
