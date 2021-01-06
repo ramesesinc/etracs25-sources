@@ -48,10 +48,14 @@ class RemittanceRCDReportService {
 			} 
 		} 
 
+		def total = 0.0; 
 		result.collectionsummaries = rptdb.getCollectionSummaries( p ); 
-		result.collectionsummaries.each {
+		result.collectionsummaries.each { 
+			total += ( it.amount ? it.amount : 0.0 ); 
+
 			it.particulars = 'AF#'+ it.formno.toString() +':'+ it.collectiontypetitle +'-'+ it.fundtitle; 
 		}
+		result.amount = total; 
 
 		result.payments = rptdb.getOtherPayments( p ); 
 
