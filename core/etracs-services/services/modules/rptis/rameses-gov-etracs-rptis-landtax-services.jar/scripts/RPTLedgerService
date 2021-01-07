@@ -325,7 +325,7 @@ class RPTLedgerService
         ledger.tdno           = info.tdno 
         ledger.lastyearpaid   = info.lastyearpaid
         ledger.lastqtrpaid    = info.lastqtrpaid
-        ledger.taxable        = info.taxable
+        ledger.taxable        = (info.taxable != null ? info.taxable : true)
         em_rptledger.update(ledger)
 
         // post new ledger items
@@ -684,6 +684,7 @@ class RPTLedgerService
                 newlf.actualuse = it.actualuse
                 list << newlf
             }
+            if (!list) list << lf
             return list
         } else {
             return [lf]
