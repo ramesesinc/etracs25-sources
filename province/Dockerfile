@@ -1,4 +1,4 @@
-FROM ramesesinc/etracs-services:2.5.02.05
+FROM ramesesinc/etracs-services:2.5.02.06
 
 COPY /modules.conf.d /temp/modules.conf.d
 
