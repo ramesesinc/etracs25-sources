@@ -13,10 +13,13 @@ class RPTLedgerSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
-    def syncSvc 
+    def mainSyncSvc 
+
+    @Service('RPTSyncService')
+    def syncSvc
 
     @Service('RPTLedgerSyncService')
-    def  ledgerSyncSvc
+    def  ledgerSync
 
     @DataContext('rptledger')
     def em_rptledger
@@ -45,7 +48,7 @@ class RPTLedgerSyncInterceptor
                 def rptledger = em_rptledger.select('objid,tdno,lguid').find([objid: pmt.refid]).first()
                 def data = getDataForSync(rptledger, receipt, 'RPTLEDGER-POST-PAYMENT')
                 data.info.paymentid = pmt.objid
-                syncSvc.createDataForSync(data)
+                mainSyncSvc.createDataForSync(data)
             }
         }
     }   
@@ -62,7 +65,7 @@ class RPTLedgerSyncInterceptor
                 def rptledger = em_rptledger.select('objid,tdno,lguid').find([objid: pmt.refid]).first()
                 def data = getDataForSync(rptledger, receipt, 'RPTLEDGER-POST-VOID-PAYMENT')
                 data.info.paymentid = pmt.objid
-                syncSvc.createDataForSync(data)
+                mainSyncSvc.createDataForSync(data)
             }
         }
     }       
@@ -72,7 +75,7 @@ class RPTLedgerSyncInterceptor
     @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('RPTLEDGER-.*')}", index=50000) 
     public void scheduleForSync( evt ) {
         def data = evt.result 
-        ledgerSyncSvc.schedule(data)
+        ledgerSync.schedule(data)
     }   
 
 
@@ -84,13 +87,13 @@ class RPTLedgerSyncInterceptor
     @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('RPTLEDGER-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        ledgerSyncSvc.send(syncdata)
+        ledgerSync.send(syncdata)
     }        
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('RPTLEDGER-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        ledgerSyncSvc.receive(syncdata)
+        ledgerSync.receive(syncdata)
         evt.result.status = 'OK'
     }
 
@@ -101,6 +104,7 @@ class RPTLedgerSyncInterceptor
         data.reftype = 'rptledger'
         data.refno = rptledger.tdno
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(rptledger)
         data.action = action
         data.info = [receiptno: receipt.receiptno]
         return data

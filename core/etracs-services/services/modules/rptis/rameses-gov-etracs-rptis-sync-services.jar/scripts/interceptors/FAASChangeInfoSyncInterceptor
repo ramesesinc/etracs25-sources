@@ -13,7 +13,10 @@ class FAASChangeInfoSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
-    def syncSvc    
+    def mainSyncSvc    
+
+    @Service('RPTSyncService')
+    def syncSvc
 
     @Service('FAASChangeInfoSyncService')
     def changeInfoSync 
@@ -27,7 +30,7 @@ class FAASChangeInfoSyncInterceptor
     @After(pattern="FAASChangeInfoService.updateInfo", eval="#{args[0].remote == null}") 
     public void schedulePostChangeInfo( evt ) {
         def changeinfo = evt.result
-        syncSvc.createDataForSync(getDataForSync(changeinfo, 'CHANGEINFO-FAAS-POST'))
+        mainSyncSvc.createDataForSync(getDataForSync(changeinfo, 'CHANGEINFO-FAAS-POST'))
     }
 
     /* scheduler */
@@ -63,6 +66,7 @@ class FAASChangeInfoSyncInterceptor
         data.reftype = 'changeinfo'
         data.refno = changeinfo.action ? changeinfo.action : '-'
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(changeinfo)
         data.action = action
         data.info = [:]
         return data

@@ -13,10 +13,13 @@ class FAASAnnotationSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('FAASAnnotationSyncService')
-    def annotationSyncSvc
+    def annotationSync
 
 
     /*---------------------------------------------------------
@@ -27,13 +30,13 @@ class FAASAnnotationSyncInterceptor
     @After(pattern="FAASAnnotationService.approve") 
     public void createAnnotation( evt ) {
         def annotation = evt.result 
-        syncSvc.createDataForSync(getDataForSync(annotation, 'FAASANNOTATION-POST'))
+        mainSyncSvc.createDataForSync(getDataForSync(annotation, 'FAASANNOTATION-POST'))
     }   
 
     @After(pattern="CancelAnnotationService.approve") 
     public void createCancelAnnotation( evt ) {
         def cancelannotation = evt.result 
-        syncSvc.createDataForSync(getDataForSync(cancelannotation, 'FAASANNOTATION-CANCELLED'))
+        mainSyncSvc.createDataForSync(getDataForSync(cancelannotation, 'FAASANNOTATION-CANCELLED'))
     }   
 
 
@@ -41,7 +44,7 @@ class FAASAnnotationSyncInterceptor
     @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('FAASANNOTATION-.*')}", index=50000) 
     public void scheduleFAASForSync( evt ) {
         def data = evt.result 
-        annotationSyncSvc.schedule(data)
+        annotationSync.schedule(data)
     }   
 
 
@@ -53,13 +56,13 @@ class FAASAnnotationSyncInterceptor
     @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAASANNOTATION-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        annotationSyncSvc.send(syncdata)
+        annotationSync.send(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAASANNOTATION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        annotationSyncSvc.receive(syncdata)
+        annotationSync.receive(syncdata)
         evt.result.status = 'OK'
     }
 
@@ -70,6 +73,7 @@ class FAASAnnotationSyncInterceptor
         data.reftype = 'faasannotation'
         data.refno = annotation.txnno
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(annotation)
         data.action = action
         return data
     }

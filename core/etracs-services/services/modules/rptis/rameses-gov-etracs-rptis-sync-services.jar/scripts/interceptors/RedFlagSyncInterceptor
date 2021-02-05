@@ -13,6 +13,9 @@ class RedFlagSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('RedFlagSyncService')
@@ -27,19 +30,19 @@ class RedFlagSyncInterceptor
     @After(pattern="ProvinceRedFlagService.(postRedFlag|resendToMunicipality)") 
     public void scheduleSubmitToMunicipality( evt ) {
         def redflag = evt.result
-        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-FOR-MUNICIPALITY'))
+        mainSyncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-FOR-MUNICIPALITY'))
     }
 
     @After(pattern="MunicipalityRedFlagService.(resolveRedFlag)") 
     public void scheduleResolvedRedFlag( evt ) {
         def redflag = evt.result
-        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
+        mainSyncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
     }
 
     @After(pattern="MunicipalityRedFlagService.resendToProvince") 
     public void scheduleResendToProvince( evt ) {
         def redflag = evt.result
-        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
+        mainSyncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
     }
 
     /* scheduler */
@@ -76,6 +79,7 @@ class RedFlagSyncInterceptor
         data.reftype = 'redflag'
         data.refno = (redflag.caseno ? redflag.caseno : redflag.refno)
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(redflag)
         data.action = action
         data.info = [:]
         return data

@@ -13,6 +13,9 @@ class FAASRestrictionSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('FAASRestrictionSyncService')
@@ -28,25 +31,25 @@ class FAASRestrictionSyncInterceptor
     @After(pattern="FAASRestrictionService.approve", index=50000) 
     public void schedulePostRestriction( evt ) {
         def restriction = evt.result 
-        syncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-POST'))
+        mainSyncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-POST'))
     }   
 
     @After(pattern="FAASRestrictionService.removeRestriction", eval="#{args[0].state != 'DRAFT'}", index=50000) 
     public void scheduleDeleteRestriction( evt ) {
         def restriction = evt.args[0]
-        syncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-DELETE'))
+        mainSyncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-DELETE'))
     }
 
     @After(pattern="FAASRestrictionService.cancel", index=50000) 
     public void scheduleCancelRestriction( evt ) {
         def restriction = evt.result
-        syncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-CANCEL'))
+        mainSyncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-CANCEL'))
     }
 
     @After(pattern="FAASRestrictionService.reactivate", index=50000) 
     public void scheduleReactivate( evt ) {
         def restriction = evt.result
-        syncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-REACTIVATE'))
+        mainSyncSvc.createDataForSync(getDataForSync(restriction, 'FAASRESTRICTION-REACTIVATE'))
     }
 
 
@@ -82,6 +85,7 @@ class FAASRestrictionSyncInterceptor
         data.reftype = 'faasrestriction'
         data.refno = restriction.parent.tdno
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(restriction)
         data.action = action
         return data
     }

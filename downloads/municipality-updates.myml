@@ -21,3 +21,4 @@ app:
     - { order: 243, version: 2.50, file: "modules/rptis/rameses-gov-etracs-rptis-report.jar" }
     - { order: 243, version: 2.50, file: "modules/rptis/rameses-gov-etracs-rptis-transmittal.jar" }
     - { order: 244, version: 2.50, file: "modules/rptis/rameses-gov-etracs-rptis-municipality.jar" }
+    - { order: 244, version: 2.50, file: "modules/rptis/rameses-gov-etracs-rptis-sync2.jar" }
