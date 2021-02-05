@@ -13,6 +13,9 @@ class FAASSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('FAASSyncService')
@@ -30,44 +33,44 @@ class FAASSyncInterceptor
     @After(pattern="FAASService.approveFaas", eval="#{result.datacapture == 1 || result.datacapture == true}", index=50000) 
     public void createDataCapturedFAAS( evt ) {
         def faas = evt.result 
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
     }   
 
     @After(pattern="MunicipalityFAASService.resendToProvince", index=50000) 
     public void resendCaptureToProvince( evt ) {
         def faas = evt.result 
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
     }   
 
     @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'approver' && args[0].action == 'approve'}", index=50000) 
     public void createOnlineApprovedFAAS( evt ) {
         def faas = evt.args[0].data 
         faas.putAll(faasSvc.approveFaas(faas))
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
     }   
     
     @After(pattern="FAASService.resendToMunicipality", index=50000) 
     public void resendToMunicipality( evt ) {
         def faas = evt.result
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
     }   
 
     @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'recommender' && args[0].action == 'submit_to_province'}", index=50000) 
     public void createProvinceApproval( evt ) {
         def faas = evt.args[0].data 
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
     }       
 
     @After(pattern="MunicipalityFAASService.resendToProvince", eval="#{result.datacapture == false && result.taskstate == 'provapprover'}", index=50000) 
     public void resendForApprovalToProvince( evt ) {
         def faas = evt.result 
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
     }   
 
     @After(pattern="MunicipalityFAASService.resendRequirements", eval="#{result.datacapture == false && result.taskstate == 'provapprover'}", index=50000) 
     public void resendRequirementsToProvince( evt ) {
         def faas = evt.result 
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-REQUIREMENTS'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-REQUIREMENTS'))
     }   
 
 
@@ -75,14 +78,14 @@ class FAASSyncInterceptor
     // public void createDeleteFaas( evt ) {
     //     def faas = evt.args[0]
     //     if (faas) {
-    //         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
+    //         mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
     //     }
     // }
 
     @After(pattern="FAASService.revertToInterim") 
     public void createRevertToInterim( evt ) {
         def faas = evt.result
-        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-REVERT-TO-INTERIM'))
+        mainSyncSvc.createDataForSync(getDataForSync(faas, 'FAAS-REVERT-TO-INTERIM'))
     }
 
 
@@ -119,6 +122,7 @@ class FAASSyncInterceptor
         data.reftype = 'faas'
         data.refno = (faas.tdno ? faas.tdno : faas.utdno)
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(faas)
         data.action = action
         data.info = [:]
         return data

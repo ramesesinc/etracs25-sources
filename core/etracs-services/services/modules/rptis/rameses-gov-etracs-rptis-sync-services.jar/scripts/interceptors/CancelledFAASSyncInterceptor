@@ -13,6 +13,9 @@ class CancelledFAASSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('CancelledFAASSyncService')
@@ -27,19 +30,19 @@ class CancelledFAASSyncInterceptor
     @After(pattern="CancelledFAASService.approve") 
     public void scheduleManualApproved( evt ) {
         def cancelledfaas = evt.result
-        syncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-MANUAL-APPROVED'))
+        mainSyncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-MANUAL-APPROVED'))
     }
 
     @After(pattern="CancelledFAASWorkflowService.signal", eval="#{args[0].state == 'recommender' && args[0].action == 'submit_to_province'}", index=50000) 
     public void scheduleSubmitToProvince( evt ) {
         def cancelledfaas = evt.args[0].data
-        syncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-FORAPPROVAL'))
+        mainSyncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-FORAPPROVAL'))
     }
 
     @After(pattern="CancelledFAASService.onlineApprove") 
     public void scheduleOnlineApproved( evt ) {
         def cancelledfaas = evt.result
-        syncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-ONLINE-APPROVED'))
+        mainSyncSvc.createDataForSync(getDataForSync(cancelledfaas, 'CANCELLEDFAAS-ONLINE-APPROVED'))
     }
 
     /* scheduler */
@@ -76,6 +79,7 @@ class CancelledFAASSyncInterceptor
         data.reftype = 'cancelledfaas'
         data.refno = cancelledfaas.txnno
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(cancelledfaas)
         data.action = action
         data.info = [:]
         return data

@@ -9,6 +9,9 @@ class RPTImageSyncInterceptor
     def env
 
     @Service('RPTMainSyncService')
+    def mainSyncSvc
+
+    @Service('RPTSyncService')
     def syncSvc
 
     @Service('RPTImageSyncService')
@@ -23,7 +26,7 @@ class RPTImageSyncInterceptor
     @After(pattern="DBImageService.resendImage") 
     public void resendImage( evt ) {
         def params = evt.result
-        syncSvc.createDataForSync(getDataForSync(params, 'RPT-IMAGE-RESEND'))
+        mainSyncSvc.createDataForSync(getDataForSync(params, 'RPT-IMAGE-RESEND'))
     }
 
         /* scheduler */
@@ -40,6 +43,7 @@ class RPTImageSyncInterceptor
         data.reftype = 'dbimage'
         data.refno = '-'
         data.orgid = env.ORGID
+        data.remote = syncSvc.getRemoteOrg(image)
         data.action = action
         data.info = [lguid: image.lguid]
         return data
