@@ -1,4 +1,4 @@
-FROM ramesesinc/alpine-java:jdk7
+FROM ramesesinc/alpine-java:jre8
 
 COPY /apps /apps
 COPY /tz/zoneinfo /usr/share/zoneinfo
