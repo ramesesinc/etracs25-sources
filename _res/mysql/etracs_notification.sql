@@ -1,17 +1,8 @@
-/*
-Navicat MySQL Data Transfer
 
-Source Server         : local
-Source Server Version : 50559
-Source Host           : localhost:3306
-Source Database       : etracs_notification
-
-Target Server Type    : MYSQL
-Target Server Version : 50559
-File Encoding         : 65001
-
-Date: 2020-10-23 11:29:37
-*/
+CREATE DATABASE `etracs_notification` CHARACTER SET utf8
+;
+USE `etracs_notification`
+;
 
 SET FOREIGN_KEY_CHECKS=0;
 
