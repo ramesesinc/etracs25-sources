@@ -1,3 +1,5 @@
+drop table if exists vw_cashbook_cashreceipt
+;
 drop view if exists vw_cashbook_cashreceipt
 ; 
 CREATE VIEW vw_cashbook_cashreceipt AS 
@@ -29,6 +31,8 @@ from cashreceipt c
 ;
 
 
+drop table if exists vw_cashbook_cashreceipt_share
+;
 drop view if exists vw_cashbook_cashreceipt_share
 ; 
 CREATE VIEW vw_cashbook_cashreceipt_share AS 
@@ -62,6 +66,8 @@ from cashreceipt c
 ;
 
 
+drop table if exists vw_cashbook_cashreceipt_share_payable
+;
 drop view if exists vw_cashbook_cashreceipt_share_payable
 ; 
 CREATE VIEW vw_cashbook_cashreceipt_share_payable AS 
@@ -95,6 +101,8 @@ from cashreceipt c
 ;
 
 
+drop table if exists vw_cashbook_remittance
+;
 drop view if exists vw_cashbook_remittance
 ;
 CREATE VIEW vw_cashbook_remittance AS 
@@ -124,6 +132,8 @@ from remittance r
   left join cashreceipt_void v on v.receiptid = c.objid 
 ;
 
+drop table if exists vw_cashbook_remittance_share
+;
 drop view if exists vw_cashbook_remittance_share
 ;
 CREATE VIEW vw_cashbook_remittance_share AS 
@@ -154,6 +164,8 @@ from remittance r
   left join cashreceipt_void v on v.receiptid = c.objid 
 ;
 
+drop table if exists vw_cashbook_remittance_share_payable
+;
 drop view if exists vw_cashbook_remittance_share_payable
 ;
 CREATE VIEW vw_cashbook_remittance_share_payable AS 
@@ -185,6 +197,8 @@ from remittance r
 ;
 
 
+drop table if exists vw_cashbook_cashreceiptvoid
+;
 drop view if exists vw_cashbook_cashreceiptvoid
 ; 
 CREATE VIEW vw_cashbook_cashreceiptvoid AS 
@@ -222,6 +236,8 @@ from cashreceipt_void v
   left join remittance r on r.objid = c.remittanceid 
 ;
 
+drop table if exists vw_cashbook_cashreceiptvoid_share
+;
 drop view if exists vw_cashbook_cashreceiptvoid_share
 ; 
 CREATE VIEW vw_cashbook_cashreceiptvoid_share AS 
@@ -260,6 +276,8 @@ from cashreceipt_void v
   left join remittance r on r.objid = c.remittanceid 
 ;
 
+drop table if exists vw_cashbook_cashreceiptvoid_share_payable
+;
 drop view if exists vw_cashbook_cashreceiptvoid_share_payable
 ; 
 CREATE VIEW vw_cashbook_cashreceiptvoid_share_payable AS 

@@ -12,6 +12,7 @@ class DepositVoucherFundListInterceptor {
 		def result = evt.result;
 		result << [  title: 'Open', state:'OPEN' ];
 		result << [  title: 'Posted', state:'POSTED' ];
+		result << [  title: 'Cancelled', state:'CANCELLED' ];
 	}
 
 	@Before(pattern="QueryService.getList", eval="#{ args[0]._schemaname == 'depositvoucher_fund' }")
