@@ -86,3 +86,21 @@ from (
 group by 
 	refid, refdate, refno, reftype, acctid, fundid, 
 	orgid, collectorid, remittanceid, remittancedate 
+
+
+
+[removeItemsByRef]
+delete from income_summary where refid = $P{refid} 
+
+[postItem]
+insert into income_summary ( 
+	refid, refdate, refno, reftype, acctid, fundid, amount, 
+	orgid, collectorid, refyear, refmonth, refqtr, 
+	remittanceid, remittancedate, remittanceyear, remittancemonth, remittanceqtr, 
+	liquidationid, liquidationdate, liquidationyear, liquidationmonth, liquidationqtr 
+) values (
+	$P{refid}, $P{refdate}, $P{refno}, $P{reftype}, $P{acctid}, $P{fundid}, $P{amount}, 
+	$P{orgid}, $P{collectorid}, $P{refyear}, $P{refmonth}, $P{refqtr}, 
+	$P{remittanceid}, $P{remittancedate}, $P{remittanceyear}, $P{remittancemonth}, $P{remittanceqtr}, 
+	$P{liquidationid}, $P{liquidationdate}, $P{liquidationyear}, $P{liquidationmonth}, $P{liquidationqtr} 
+)

@@ -2,6 +2,8 @@
 -- 
 -- VIEWS
 -- 
+drop table if exists sys_user_role
+;
 drop view if exists sys_user_role
 ;
 create view sys_user_role AS 
@@ -24,6 +26,8 @@ from sys_usergroup_member ugm
   join sys_user u on u.objid = ugm.user_objid 
 ; 
 
+drop table if exists vw_af_control_detail 
+;
 drop view if exists vw_af_control_detail 
 ; 
 create view vw_af_control_detail AS 
@@ -82,6 +86,8 @@ from af_control_detail afd
   join afunit afu on (afu.itemid = af.objid and afu.unit = afc.unit) 
 ;
 
+drop table if exists vw_af_inventory_summary
+;
 drop view if exists vw_af_inventory_summary
 ;
 create view vw_af_inventory_summary AS 
@@ -98,6 +104,8 @@ from af
   join afunit u on af.objid = u.itemid 
 ;
 
+drop table if exists vw_afunit
+;
 drop view if exists vw_afunit
 ;
 create view vw_afunit AS 
@@ -121,6 +129,8 @@ from afunit u
 ; 
 
 
+drop table if exists vw_cashreceipt_itemaccount
+;
 drop view if exists vw_cashreceipt_itemaccount
 ;
 create view vw_cashreceipt_itemaccount AS 
@@ -146,6 +156,8 @@ where state = 'ACTIVE'
 ; 
 
 
+drop table if exists vw_cashreceipt_itemaccount_collectiontype
+;
 drop view if exists vw_cashreceipt_itemaccount_collectiontype
 ;
 create view vw_cashreceipt_itemaccount_collectiontype AS 
@@ -200,6 +212,8 @@ where ia.state = 'ACTIVE'
 ;
 
 
+drop table if exists vw_cashreceiptpayment_noncash
+;
 drop view if exists vw_cashreceiptpayment_noncash
 ;
 create view vw_cashreceiptpayment_noncash AS 
@@ -239,6 +253,8 @@ from cashreceiptpayment_noncash nc
 ;
 
 
+drop table if exists vw_cashreceiptpayment_noncash_liquidated
+;
 drop view if exists vw_cashreceiptpayment_noncash_liquidated
 ;
 create view vw_cashreceiptpayment_noncash_liquidated AS 
@@ -284,6 +300,8 @@ from collectionvoucher cv
 ;
 
 
+drop table if exists vw_collectiongroup
+;
 drop view if exists vw_collectiongroup
 ;
 create view vw_collectiongroup AS 
@@ -308,6 +326,8 @@ where cg.state = 'ACTIVE'
 ;
 
 
+drop table if exists vw_collectiontype
+;
 drop view if exists vw_collectiontype
 ;
 create view vw_collectiontype AS 
@@ -374,6 +394,8 @@ where c.state = 'ACTIVE'
 ;
 
 
+drop table if exists vw_collectiontype_account
+;
 drop view if exists vw_collectiontype_account
 ;
 create view vw_collectiontype_account AS 
@@ -394,6 +416,8 @@ from collectiontype_account cta
 ;
 
 
+drop table if exists vw_remittance_cashreceipt
+;
 drop view if exists vw_remittance_cashreceipt
 ;
 create view vw_remittance_cashreceipt AS 
@@ -433,6 +457,8 @@ from remittance r
 ;
 
 
+drop table if exists vw_remittance_cashreceipt_af
+;
 drop view if exists vw_remittance_cashreceipt_af
 ;
 create view vw_remittance_cashreceipt_af AS 
@@ -536,6 +562,8 @@ group by
 ;
 
 
+drop table if exists vw_remittance_cashreceipt_afsummary
+;
 drop view if exists vw_remittance_cashreceipt_afsummary
 ;
 create view vw_remittance_cashreceipt_afsummary AS 
@@ -571,6 +599,8 @@ group by
 ;
 
 
+drop table if exists vw_remittance_cashreceiptitem
+;
 drop view if exists vw_remittance_cashreceiptitem
 ;
 create view vw_remittance_cashreceiptitem AS 
@@ -609,6 +639,8 @@ from remittance r
 ;
 
 
+drop table if exists vw_remittance_cashreceiptpayment_noncash
+;
 drop view if exists vw_remittance_cashreceiptpayment_noncash
 ; 
 create view vw_remittance_cashreceiptpayment_noncash AS 
@@ -657,6 +689,8 @@ from remittance r
 ;
 
 
+drop table if exists vw_remittance_cashreceiptshare
+;
 drop view if exists vw_remittance_cashreceiptshare
 ;
 create view vw_remittance_cashreceiptshare AS 
@@ -694,6 +728,8 @@ from remittance r
 	left join cashreceipt_void v on v.receiptid = c.objid 
 ; 
 
+drop table if exists vw_collectionvoucher_cashreceiptitem
+;
 drop view if exists vw_collectionvoucher_cashreceiptitem
 ;
 create view vw_collectionvoucher_cashreceiptitem AS 
@@ -731,6 +767,8 @@ from collectionvoucher cv
 ;
 
 
+drop table if exists vw_collectionvoucher_cashreceiptshare
+;
 drop view if exists vw_collectionvoucher_cashreceiptshare
 ;
 create view vw_collectionvoucher_cashreceiptshare AS 
@@ -768,6 +806,8 @@ from collectionvoucher cv
 ; 
 
 
+drop table if exists vw_deposit_fund_transfer
+;
 drop view if exists vw_deposit_fund_transfer
 ;
 create view vw_deposit_fund_transfer AS 
@@ -790,6 +830,8 @@ from deposit_fund_transfer dft
 ; 
 
 
+drop table if exists vw_entityindividual
+;
 drop view if exists vw_entityindividual
 ;
 create view vw_entityindividual AS 
@@ -826,6 +868,8 @@ from entityindividual ei
 ; 
 
 
+drop table if exists vw_entity_relation
+;
 drop view if exists vw_entity_relation
 ;
 create view vw_entity_relation AS 
@@ -866,6 +910,8 @@ from entity_relation er
 ;
 
 
+drop table if exists vw_entityindividual_lookup
+;
 drop view if exists vw_entityindividual_lookup
 ;
 create view vw_entityindividual_lookup AS 
@@ -887,6 +933,8 @@ from entity e
 ;
 
 
+drop table if exists vw_entityrelation_lookup
+;
 drop view if exists vw_entityrelation_lookup
 ;
 create view vw_entityrelation_lookup AS 
@@ -912,6 +960,8 @@ from entity_relation er
 ;
 
 
+drop table if exists vw_income_ledger
+;
 drop view if exists vw_income_ledger
 ;
 create view vw_income_ledger AS 
@@ -935,6 +985,8 @@ from payable_ledger pl
 ;
 
 
+drop table if exists vw_afunit
+;
 drop view if exists vw_afunit
 ;
 create view vw_afunit AS 
@@ -958,6 +1010,8 @@ from afunit u
 ;
 
 
+DROP table IF EXISTS vw_income_ledger
+;
 DROP VIEW IF EXISTS vw_income_ledger
 ;
 CREATE VIEW vw_income_ledger AS
@@ -975,6 +1029,8 @@ FROM payable_ledger l
   INNER JOIN jev ON jev.objid = l.jevid
 ;
 
+drop table if exists vw_account_item_mapping 
+;
 drop view if exists vw_account_item_mapping 
 ;
 create view vw_account_item_mapping as 
@@ -988,6 +1044,8 @@ from account_item_mapping aim
 ;
 
 
+drop table if exists vw_account_income_summary
+;
 drop view if exists vw_account_income_summary
 ; 
 create view vw_account_income_summary as 
@@ -1003,6 +1061,8 @@ from account_item_mapping aim
 
 
 
+drop table if exists vw_cashbook_cashreceipt
+;
 drop view if exists vw_cashbook_cashreceipt
 ; 
 CREATE VIEW vw_cashbook_cashreceipt AS select  
@@ -1028,6 +1088,8 @@ from cashreceipt c
 ;
 
 
+drop table if exists vw_cashbook_cashreceipt_share
+;
 drop view if exists vw_cashbook_cashreceipt_share
 ; 
 CREATE VIEW vw_cashbook_cashreceipt_share AS 
@@ -1056,6 +1118,8 @@ from cashreceipt c
 ;
 
 
+drop table if exists vw_cashbook_cashreceiptvoid
+;
 drop view if exists vw_cashbook_cashreceiptvoid
 ; 
 CREATE VIEW vw_cashbook_cashreceiptvoid AS 
@@ -1090,6 +1154,8 @@ from cashreceipt_void v
 ;
 
 
+drop table if exists vw_cashbook_remittance
+;
 drop view if exists vw_cashbook_remittance
 ;
 CREATE VIEW vw_cashbook_remittance AS 
@@ -1114,6 +1180,8 @@ from remittance rem
   inner join remittance_fund remf on remf.remittanceid = rem.objid 
 ;
 
+drop table if exists vw_cashreceipt_itemaccount_collectiongroup
+;
 drop view if exists vw_cashreceipt_itemaccount_collectiongroup
 ; 
 CREATE VIEW vw_cashreceipt_itemaccount_collectiongroup AS 
@@ -1138,6 +1206,8 @@ from collectiongroup_account ca
 ;
 
 
+drop table if exists vw_account_mapping
+;
 drop view if exists vw_account_mapping
 ;
 create view vw_account_mapping as 
@@ -1148,6 +1218,8 @@ from account_item_mapping m
 
 
 
+drop table if exists vw_income_summary
+;
 drop view if exists vw_income_summary
 ; 
 create view vw_income_summary as 
@@ -1160,6 +1232,8 @@ from income_summary inc
 ;
 
 
+drop table if exists sys_user_role
+;
 drop table if exists sys_user_role
 ;
 drop view if exists sys_user_role
@@ -1199,6 +1273,8 @@ from account_incometarget t
 ;
 
 
+DROP table IF EXISTS vw_business_application_lob_retire
+;
 DROP VIEW IF EXISTS vw_business_application_lob_retire
 ;
 CREATE VIEW vw_business_application_lob_retire AS 
@@ -1246,6 +1322,8 @@ where alob.assessmenttype = 'RETIRE'
 ;
 
 
+drop table if exists vw_entity_mapping 
+;
 drop view if exists vw_entity_mapping 
 ;
 create view vw_entity_mapping as 
@@ -1264,6 +1342,8 @@ left join sys_org m on b.parent_objid = m.objid
 ;
 
 
+DROP table IF EXISTS vw_fund 
+;
 DROP VIEW IF EXISTS vw_fund 
 ;
 CREATE VIEW vw_fund AS 
